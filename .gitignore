@@ -1,0 +1,24 @@
+# Kernel module build output
+*.ko
+*.o
+*.mod
+*.mod.c
+*.mod.o
+*.cmd
+.*.cmd
+.tmp_versions/
+Modules.symvers
+modules.order
+
+# User-space build output
+user/test_driver
+*.out
+a.out
+
+# Editor and OS files
+.vscode/
+.DS_Store
+
+# Debugger and analysis output
+*.dSYM/
+core
