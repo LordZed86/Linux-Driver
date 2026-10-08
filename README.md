@@ -213,13 +213,12 @@ There is no automated test framework; testing is done by running the module and 
 
 ## Documentation
 
-| Document                                  | Description                                              |
+| Document | Description |
 | ----------------------------------------- | -------------------------------------------------------- |
-| [Project Proposal](docs/proposal.pdf)     | Original proposal submitted for CS 370                   |
-| [Midterm Report](docs/midterm_report.pdf) | Progress report with technical evidence                  |
-| [Dev Log](docs/notes/dev_log.md)          | Chronological record of decisions, bugs, and fixes       |
-| [Evidence](docs/evidence/)                | Saved tool output (`readelf`, `objdump`, `strace`, etc.) |
-| [AI Use Log](docs/notes/ai_use_log.md)    | Record of how AI assistance was used                     |
+| [Project Proposal](docs/proposal.md) | Original proposal submitted for CS 370 |
+| [Midterm Report](docs/midterm_report.pdf) | Progress report with technical evidence |
+| [Dev Log](docs/notes/dev_log.md) | Chronological record of decisions, bugs, and fixes |
+| [Evidence](docs/evidence/) | Saved tool output (`readelf`, `objdump`, `strace`, etc.) |
 
 ---
 
