@@ -118,7 +118,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 
 > **Warning:** Kernel modules run inside the real kernel. A bug can freeze or crash the machine. Test in a QEMU/KVM virtual machine when possible, commit work to Git, and run `sync` before loading a new build. This project cannot run on macOS or in cloud environments such as Codespaces; it needs a Linux system with matching kernel headers.
 
-**Prerequisites:** Ubuntu [24.04 / 26.04] LTS on x86-64 (native install or VM)
+**Prerequisites:** Ubuntu [26.04] LTS on x86-64 (native install or VM)
 
 ```bash
 sudo apt update
