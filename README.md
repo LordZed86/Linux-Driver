@@ -35,13 +35,13 @@ Built for CS 370 — Computer Systems and Architecture.
 - [ ] User-space test program
 - [ ] Edge-case testing and evidence collected
 
-*Update this list as stages are completed.*
+*TODO: update this list as stages are completed.*
 
 ---
 
 ## Screenshots
 
-*Add terminal captures as each stage is completed.*
+*TODO: Add terminal captures as each stage is completed.*
 
 | Module load                                           | Device node                                           |
 | ----------------------------------------------------- | ----------------------------------------------------- |
@@ -80,7 +80,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 | Compilation           | Building the module against kernel headers with `make` and `gcc`                 |
 | Object files          | Inspecting the `.ko` file's sections and symbols                                 |
 
-*Add concepts as new course topics are applied to the driver.*
+*TODO: update as new course topics are applied to the driver.*
 
 ---
 
@@ -116,7 +116,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 
 ## Running locally
 
-> **Warning:** Kernel modules run inside the real kernel. A bug can freeze or crash the machine. Test in a QEMU/KVM virtual machine when possible, commit your work to Git, and run `sync` before loading a new build. This project cannot run on macOS or in cloud environments such as Codespaces; it needs a Linux system with matching kernel headers.
+> **Warning:** Kernel modules run inside the real kernel. A bug can freeze or crash the machine. Test in a QEMU/KVM virtual machine when possible, commit work to Git, and run `sync` before loading a new build. This project cannot run on macOS or in cloud environments such as Codespaces; it needs a Linux system with matching kernel headers.
 
 **Prerequisites:** Ubuntu [24.04 / 26.04] LTS on x86-64 (native install or VM)
 
@@ -204,10 +204,10 @@ There is no automated test framework; testing is done by running the module and 
 
 - **Language:** C (kernel module uses the kernel's GNU C dialect; the test program uses C99)
 - **Environment:** Ubuntu [24.04 / 26.04] LTS on a 2015 Intel MacBook, with a QEMU/KVM guest for testing
-- **Kernel:** Linux `[output of uname -r]`
+- **Kernel:** Linux `[output of uname -r]` **TODO: update kernel info**
 - **Build:** GNU Make with the kernel build system (module), gcc (test program)
-- **Analysis:** `readelf`, `nm`, `objdump`, `modinfo`, `strace`, lldb, GDB
-- **Version control:** Git
+- **Analysis:** `readelf`, `nm`, `objdump`, `modinfo`, `strace`, `lldb`, `GDB`
+- **Version control:** Git/Github
 
 ---
 
@@ -226,4 +226,4 @@ There is no automated test framework; testing is done by running the module and 
 
 [LICENSE] — see [LICENSE](./LICENSE) for details.
 
-> Kernel modules usually declare a GPL-compatible license in the source (`MODULE_LICENSE("GPL")`), so the repo license should match.
+> Kernel modules usually declare a GPL-compatible license in the source (`MODULE_LICENSE("GPL")`). I will most likely do the same.

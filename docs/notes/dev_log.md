@@ -49,4 +49,3 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - Fix: `git config --global user.name "..."` and `git config --global user.email "..."`. [Confirm this resolved it.]
   - GitHub no longer accepts a password for pushes, so I need a personal access token or an SSH key. But i got logged in and things are working fine for now.
 - **Next:** First `make`, `insmod`, `dmesg`, `rmmod` cycle, with screenshots saved to `docs/screenshots/`.
-- 
