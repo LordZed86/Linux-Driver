@@ -1,0 +1,1 @@
+mychardev.ko: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), BuildID[sha1]=ec3738a21eed63efa8bfc1d60ac158fea4d207b3, with debug_info, not stripped

@@ -1,0 +1,64 @@
+
+mychardev.ko:     file format elf64-x86-64
+
+
+Disassembly of section .init.text:
+
+0000000000000000 <__pfx_init_module>:
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+
+0000000000000010 <init_module>:
+  10:	e8 00 00 00 00       	call   15 <init_module+0x5>
+  15:	55                   	push   %rbp
+  16:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  1d:	48 89 e5             	mov    %rsp,%rbp
+  20:	e8 00 00 00 00       	call   25 <init_module+0x15>
+  25:	31 c0                	xor    %eax,%eax
+  27:	5d                   	pop    %rbp
+  28:	31 ff                	xor    %edi,%edi
+  2a:	e9 00 00 00 00       	jmp    2f <__UNIQUE_ID_note_321+0x17>
+
+Disassembly of section .exit.text:
+
+0000000000000000 <__pfx_cleanup_module>:
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+
+0000000000000010 <cleanup_module>:
+  10:	55                   	push   %rbp
+  11:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  18:	48 89 e5             	mov    %rsp,%rbp
+  1b:	e8 00 00 00 00       	call   20 <cleanup_module+0x10>
+  20:	5d                   	pop    %rbp
+  21:	31 c0                	xor    %eax,%eax
+  23:	31 ff                	xor    %edi,%edi
+  25:	e9 00 00 00 00       	jmp    2a <__UNIQUE_ID_note_321+0x12>
