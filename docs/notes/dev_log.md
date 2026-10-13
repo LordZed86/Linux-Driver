@@ -49,3 +49,19 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - Fix: `git config --global user.name "..."` and `git config --global user.email "..."`. [Confirm this resolved it.]
   - GitHub no longer accepts a password for pushes, so I need a personal access token or an SSH key. But i got logged in and things are working fine for now.
 - **Next:** First `make`, `insmod`, `dmesg`, `rmmod` cycle, with screenshots saved to `docs/screenshots/`.
+
+### 2026-10-12 - Stage 1 evidence collected
+
+- **What I did:**
+  - Verified the toolchain on the Ubuntu 26.04.1 host (kernel 7.0.0-34-generic): gcc, make, gdb, lldb, strace, binutils, and kernel headers all present.
+  - Cloned the repo onto the x86 host and built the hello-world module.
+  - Saved `modinfo`, `nm`, `readelf`, `objdump`, `file`, and build output to `docs/evidence/` and committed them.
+  - Redacted usernames, hostnames, and home paths from the saved output.
+- **What happened (output, errors):**
+  - Could not log in to the QEMU/KVM test VM: SSH kept returning "Permission denied" after the cloud-init password setup.
+  - Hit `virsh` permission errors because the SSH session had not picked up the new `libvirt` group.
+- **What I learned / how I fixed it:**
+  - Group membership changes only apply to new logins.
+  - Cloud-init reads its config only on first boot, so editing `user-data` later does not change an existing VM.
+  - Building and analyzing a module is safe on the host; only loading it needs the VM.
+- **Next:** Get the VM login working (likely by rebuilding with an SSH key), take the `insmod`/`dmesg`/`rmmod` screenshot, then start the midterm report.
