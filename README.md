@@ -4,7 +4,7 @@
 ![Linux kernel module](https://img.shields.io/badge/Linux-kernel%20module-orange?logo=linux&logoColor=white)
 ![Platform](https://img.shields.io/badge/platform-Ubuntu%20x86--64-informational)
 ![Status](https://img.shields.io/badge/status-in%20development-yellow)
-![License](https://img.shields.io/badge/license-[LICENSE]-lightgrey)
+![License](https://img.shields.io/badge/license-GPL--2.0-blue)
 
 A loadable Linux kernel module that registers a **virtual character device**, plus a user-space C program that talks to it through system calls. The project explores how user programs reach the kernel, how data crosses the user/kernel boundary safely, and what a compiled kernel module looks like at the object-file and assembly level.
 
@@ -14,13 +14,19 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## What it does
 
-- Registers a virtual character device (`/dev/[devicename]`) when the module loads
-- Implements `open`, `read`, `write`, and `close` (release) handlers for the device
-- Stores data in a small fixed-size kernel buffer
-- Moves data between user space and kernel space with `copy_from_user` and `copy_to_user`
-- Logs each operation to the kernel log (`dmesg`)
-- Includes a user-space test program that opens the device, writes a string, reads it back, and closes it
-- Is analyzed with `readelf`, `nm`, `objdump`, `strace`, and lldb to connect the code to CS 370 concepts
+**Working so far:**
+
+- Builds as a loadable kernel module (`mychardev.ko`)
+- Registers a virtual character device (`/dev/mychardev`) when the module loads *(stage 3 code written; not yet built or loaded on the target kernel)*
+- Implements `open`, `read`, `write`, and `close` (release) handlers that log each operation to the kernel log (`dmesg`)
+
+**Planned (stage 4):**
+
+- Store data in a small fixed-size kernel buffer
+- Move data between user space and kernel space with `copy_from_user` and `copy_to_user`
+- A user-space test program that opens the device, writes a string, reads it back, and closes it
+
+**Analysis:** the module is examined with `readelf`, `nm`, `objdump`, `strace`, and lldb to connect the code to CS 370 concepts.
 
 > **Scope:** Real hardware, interrupts, USB/PCI drivers, and device trees are out of scope. The goal is a small driver that I can fully explain.
 
@@ -28,12 +34,12 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## Status
 
-- [x] Hello-world kernel module
-- [ ] Module analysis (`modinfo`, `nm`, `readelf`, `objdump`)
-- [ ] Character device registered with logging
-- [ ] Kernel buffer with `copy_to_user` / `copy_from_user`
-- [ ] User-space test program
-- [ ] Edge-case testing and evidence collected
+- [x] Hello-world kernel module (stage 1)
+- [x] Stage 1 analysis: build output, `modinfo`, `nm`, `readelf`, `objdump` (saved in `docs/evidence/`)
+- [ ] Character device with `open`/`release`/`read`/`write` logging (stage 3): code written, **not yet built or loaded on the target kernel**
+- [ ] Kernel buffer with `copy_to_user` / `copy_from_user` (stage 4)
+- [ ] User-space test program (currently only opens and closes the device)
+- [ ] Load test in the VM and edge-case testing
 
 *TODO: update this list as stages are completed.*
 
@@ -41,11 +47,11 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## Screenshots
 
-*TODO: Add terminal captures as each stage is completed.*
+*TODO: add terminal captures as each stage is completed.*
 
-| Module load                                           | Device node                                           |
-| ----------------------------------------------------- | ----------------------------------------------------- |
-| ![insmod and dmesg output](docs/screenshots/load.png) | ![ls -l /dev/devicename](docs/screenshots/device.png) |
+| Module load                                           | Device node                                          |
+| ----------------------------------------------------- | ---------------------------------------------------- |
+| ![insmod and dmesg output](docs/screenshots/load.png) | ![ls -l /dev/mychardev](docs/screenshots/device.png) |
 
 | Test program                                            | strace                                             |
 | ------------------------------------------------------- | -------------------------------------------------- |
@@ -59,26 +65,30 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ### Data flow
 
-| user program | kernel | driver module |
-| ----------- | ------ | ------------- |
-| open("/dev/X") -> | syscall -> VFS lookup -> | open handler |
-| write(fd, buf) -> | syscall -> VFS -> | write handler -> copy_from_user -> kernel buffer |
-| read(fd, buf) -> | syscall ->  VFS -> | read handler -> copy_to_user -> user buffer |
-| close(fd) -> | syscall -> VFS -> | release handler |
+| User program     | Kernel                   | Driver module                                      |
+| ---------------- | ------------------------ | -------------------------------------------------- |
+| `open("/dev/X")` | syscall, then VFS lookup | open handler                                       |
+| `write(fd, buf)` | syscall, then VFS        | write handler, `copy_from_user` into kernel buffer |
+| `read(fd, buf)`  | syscall, then VFS        | read handler, `copy_to_user` into user buffer      |
+| `close(fd)`      | syscall, then VFS        | release handler                                    |
+
+*The `copy_*` steps are the stage 4 design; stage 3 only logs.*
 
 The kernel cannot trust a pointer handed to it by a user program, since user and kernel space are separate address spaces. `copy_from_user` and `copy_to_user` validate the user address and copy the data safely, which is the central idea of the driver.
 
 ### CS 370 concepts
 
-| CS 370 concept        | Where it shows up in this project                                                |
-| --------------------- | -------------------------------------------------------------------------------- |
-| System calls          | The test program reaches the driver through `open`, `read`, `write`, `close`     |
-| Registers             | x86-64 syscall arguments passed in `rax`, `rdi`, `rsi`, `rdx` (observed in lldb) |
-| Memory and pointers   | Kernel buffer, user buffer, and the addresses of each                            |
-| User vs. kernel space | Separate address spaces; safe copying between them                               |
-| Processes             | Identifying which process is using the device; observing it with `strace`        |
-| Compilation           | Building the module against kernel headers with `make` and `gcc`                 |
-| Object files          | Inspecting the `.ko` file's sections and symbols                                 |
+| CS 370 concept                 | Where it shows up in this project                                                                                                                        |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| System calls                   | The test program reaches the driver through `open`, `read`, `write`, `close`                                                                             |
+| Registers                      | x86-64 syscall arguments passed in `rax`, `rdi`, `rsi`, `rdx` (observed in lldb)                                                                         |
+| Number systems and bitwise ops | Major/minor device numbers packed into one integer (`MAJOR()`/`MINOR()` use shifts and masks); hex addresses in `nm`/`objdump`; octal device permissions |
+| Memory and pointers            | Kernel buffer, user buffer, and the addresses of each                                                                                                    |
+| User vs. kernel space          | Separate address spaces; safe copying between them                                                                                                       |
+| Processes                      | Identifying which process is using the device; observing it with `strace`                                                                                |
+| Compilation                    | Building the module against kernel headers with `make` and `gcc`                                                                                         |
+| Object files                   | Inspecting the `.ko` file's sections and symbols                                                                                                         |
+| Assembly, control flow, and the stack | `objdump -d` of the module's handlers; conditional jumps from the error-handling `goto` ladder; stack frames and calling-convention registers in the test program (lldb) |
 
 *TODO: update as new course topics are applied to the driver.*
 
@@ -100,7 +110,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 ```plaintext
 .
 ├── module/
-│   ├── [modulename].c         # Kernel module: registers device, implements file operations
+│   ├── mychardev.c            # Kernel module: registers device, implements file operations
 │   └── Makefile               # Builds the module with the kernel's build system
 ├── user/
 │   └── test_driver.c          # User-space test program
@@ -108,6 +118,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 │   ├── screenshots/           # Terminal captures used in the report
 │   ├── evidence/              # Saved readelf / nm / objdump / strace / lldb output
 │   └── notes/                 # Dev log and AI use log
+├── LICENSE
 ├── .gitignore
 └── README.md
 ```
@@ -118,7 +129,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 
 > **Warning:** Kernel modules run inside the real kernel. A bug can freeze or crash the machine. Test in a QEMU/KVM virtual machine when possible, commit work to Git, and run `sync` before loading a new build. This project cannot run on macOS or in cloud environments such as Codespaces; it needs a Linux system with matching kernel headers.
 
-**Prerequisites:** Ubuntu [26.04] LTS on x86-64 (native install or VM)
+**Prerequisites:** Ubuntu 26.04 LTS on x86-64 (native install or VM)
 
 ```bash
 sudo apt update
@@ -132,15 +143,15 @@ cd module
 make
 ```
 
-This produces `[modulename].ko`.
+This produces `mychardev.ko`.
 
 **2. Load the module:**
 
 ```bash
 sync
-sudo insmod [modulename].ko
+sudo insmod mychardev.ko
 dmesg | tail
-ls -l /dev/[devicename]
+ls -l /dev/mychardev
 ```
 
 **3. Build and run the test program:**
@@ -151,12 +162,12 @@ gcc -std=c99 -g -Wall -o test_driver test_driver.c
 ./test_driver
 ```
 
-If the device node needs elevated permissions, run `sudo ./test_driver`.
+The device node is owned by root by default, so run `sudo ./test_driver` if you get a permission error.
 
 **4. Unload the module:**
 
 ```bash
-sudo rmmod [modulename]
+sudo rmmod mychardev
 dmesg | tail
 ```
 
@@ -174,10 +185,10 @@ make clean
 Used to gather the technical evidence for the reports:
 
 ```bash
-modinfo [modulename].ko
-nm [modulename].ko
-readelf -h -S [modulename].ko
-objdump -d [modulename].ko
+modinfo mychardev.ko
+nm mychardev.ko
+readelf -h -S mychardev.ko
+objdump -d mychardev.ko
 strace ./test_driver
 lldb ./test_driver
 ```
@@ -193,7 +204,7 @@ There is no automated test framework; testing is done by running the module and 
 | Test                                          | Expected result                               | Result |
 | --------------------------------------------- | --------------------------------------------- | ------ |
 | Load and unload the module                    | Clean load/unload, expected `dmesg` messages  | [ ]    |
-| Device node appears                           | `/dev/[devicename]` exists after `insmod`     | [ ]    |
+| Device node appears                           | `/dev/mychardev` exists after `insmod`        | [ ]    |
 | Open and close the device                     | `open` and release messages appear in `dmesg` | [ ]    |
 | Write then read                               | Data read back matches data written           | [ ]    |
 | Read from an empty buffer                     | Returns 0 bytes, no crash                     | [ ]    |
@@ -205,27 +216,30 @@ There is no automated test framework; testing is done by running the module and 
 ## Tech
 
 - **Language:** C (kernel module uses the kernel's GNU C dialect; the test program uses C99)
-- **Environment:** Ubuntu [24.04 / 26.04] LTS on a 2015 Intel MacBook, with a QEMU/KVM guest for testing
-- **Kernel:** Linux `[output of uname -r]` **TODO: update kernel info**
+- **Environment:** Ubuntu 26.04.1 LTS on a 2015 Intel MacBook, with a QEMU/KVM guest planned for load testing
+- **Kernel:** Linux 7.0.0-34-generic (host; confirm with `uname -r` before final submission)
 - **Build:** GNU Make with the kernel build system (module), gcc (test program)
 - **Analysis:** `readelf`, `nm`, `objdump`, `modinfo`, `strace`, `lldb`, `GDB`
-- **Version control:** Git/Github
+- **Version control:** Git/GitHub
 
 ---
 
 ## Documentation
 
-| Document | Description |
+| Document                                  | Description                                              |
 | ----------------------------------------- | -------------------------------------------------------- |
-| [Project Proposal](docs/proposal.md) | Original proposal submitted for CS 370 |
-| [Midterm Report](docs/midterm_report.pdf) | Progress report with technical evidence |
-| [Dev Log](docs/notes/dev_log.md) | Chronological record of decisions, bugs, and fixes |
-| [Evidence](docs/evidence/) | Saved tool output (`readelf`, `objdump`, `strace`, etc.) |
+| [Project Proposal](docs/proposal.md)      | Original proposal submitted for CS 370                   |
+| [Midterm Report](docs/midterm_report.pdf) | Progress report with technical evidence                  |
+| [Setup Guide](docs/setup_guide.md)        | How the development environment and test VM are set up   |
+| [Dev Log](docs/notes/dev_log.md)          | Chronological record of decisions, bugs, and fixes       |
+| [Evidence](docs/evidence/)                | Saved tool output (`readelf`, `objdump`, `strace`, etc.) |
 
 ---
 
 ## License
 
-[LICENSE] — see [LICENSE](./LICENSE) for details.
+**TODO: MIT, creative commons, or WTFPL may be a more appropriate license for this project**  
 
-> Kernel modules usually declare a GPL-compatible license in the source (`MODULE_LICENSE("GPL")`). I will most likely do the same.
+GPL-2.0 — see [LICENSE](./LICENSE) for details.
+
+The module source declares `MODULE_LICENSE("GPL")`, so the repository license matches what the kernel expects.
