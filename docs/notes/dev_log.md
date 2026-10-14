@@ -44,10 +44,10 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - Added a placeholder hello-world module (`mychardev.c`), a kbuild Makefile, and a stub test program (`test_driver.c`).
   - Expanded the README using my standard format from earlier projects.
 - **What happened (output, errors):**
-  - Git on Linux wasn's setup fully; asked for `user.name` and `user.email` before I could commit and push.
+  - Git on Linux wasn't setup fully; asked for `user.name` and `user.email` before I could commit and push.
 - **What I learned / how I fixed it:**
   - Fix: `git config --global user.name "..."` and `git config --global user.email "..."`. [Confirm this resolved it.]
-  - GitHub no longer accepts a password for pushes, so I need a personal access token or an SSH key. But i got logged in and things are working fine for now.
+  - GitHub no longer accepts a password for pushes, so I need a personal access token or an SSH key. But I got logged in and things are working fine for now.
 - **Next:** First `make`, `insmod`, `dmesg`, `rmmod` cycle, with screenshots saved to `docs/screenshots/`.
 
 ### 2026-10-12 - Stage 1 evidence collected
@@ -65,3 +65,23 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - Cloud-init reads its config only on first boot, so editing `user-data` later does not change an existing VM.
   - Building and analyzing a module is safe on the host; only loading it needs the VM.
 - **Next:** Get the VM login working (likely by rebuilding with an SSH key), take the `insmod`/`dmesg`/`rmmod` screenshot, then start the midterm report.
+
+### 2026-10-13 - Assembly lecture mapped to the driver; README finalized
+
+- **What I did:**
+  - Updated the README: filled in the module and device name (`mychardev`), Ubuntu 26.04.1 LTS and kernel 7.0.0-34-generic, and chose the GPL-2.0 license to match `MODULE_LICENSE("GPL")` in the source.
+  - Corrected the status checklist so it matches reality: stage 1 and its analysis are done, stage 3 is written but not yet built or loaded.
+  - Split "What it does" into what works now and what is planned for stage 4, since `read` returns 0 bytes and `write` discards its data for now.
+  - Added the number systems and bitwise operations lecture to the concepts table (major/minor device numbers use shifts and masks, hex addresses in `nm`/`objdump`, octal device permissions).
+  - Mapped today's assembly lecture to the project (symbolic instructions, registers, control flow, the stack) and planned the evidence to collect.
+- **What happened (output, errors):**
+  - The Ubuntu host was unavailable, so nothing could be built or run today. The VM login problem from earlier is still unresolved.
+- **What I learned / how I fixed it:**
+  - A conditional jump in the disassembly corresponds to an `if (ret < 0)` check; the `goto` cleanup ladder in `mychardev_init` should appear as compare-and-jump instructions leading to the teardown calls.
+  - In a relocatable `.ko`, calls to kernel functions like `_printk` show up as relocations, because their final addresses are filled in when the module is loaded.
+  - The x86-64 calling convention passes the first arguments in `rdi`, `rsi`, and `rdx`, so at a breakpoint on `open` in lldb I can read the device path and flags directly from registers.
+  - Kernel functions have extras that user-space code lacks, such as tracing hooks at function entry, which I need to explain rather than skip in the report.
+- **Next:**
+  - On the host: build stage 3, then save `stage3_` evidence including `objdump -dr` of the handlers and the generated assembly (redacting paths).
+  - Examine the test program in lldb: stack frame (`rsp`, `rbp`, `rip`) and the registers at the `open` call.
+  - Write the stage 4 test program so all four handlers fire, fix the VM login (likely rebuild with an SSH key), then start the midterm report. Midterm is Oct 21.
