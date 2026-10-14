@@ -4,18 +4,19 @@ How my development environment for the Linux driver project is set up, why each 
 
 > **Placeholders:** Identifying details are masked on purpose. `<host-user>` is my username on the Ubuntu host, `<host-name>` is its hostname, `<mac-ip>` and `<vm-ip>` are IP addresses. Substitute your own values when running commands.
 
-**Contents**
+**Contents**  
 
-1. [Quick start](#quick-start)
-2. [Environment overview](#environment-overview)
-3. [Verify the toolchain](#1-verify-the-toolchain)
-4. [SSH access](#2-ssh-access)
-5. [Install virtualization tools](#3-install-virtualization-tools)
-6. [Create the test VM](#4-create-the-test-vm)
-7. [Prepare the VM for module builds](#5-prepare-the-vm-for-module-builds)
-8. [Backup and restore the VM](#6-backup-and-restore-the-vm)
-9. [Capturing evidence](#capturing-evidence-for-reports)
-10. [Troubleshooting](#troubleshooting-problems-i-hit)
+- [Environment Setup Guide](#environment-setup-guide)
+  - [Quick start](#quick-start)
+  - [Environment overview](#environment-overview)
+  - [1. Verify the toolchain](#1-verify-the-toolchain)
+  - [2. SSH access](#2-ssh-access)
+  - [3. Install virtualization tools](#3-install-virtualization-tools)
+  - [4. Create the test VM](#4-create-the-test-vm)
+  - [5. Prepare the VM for module builds](#5-prepare-the-vm-for-module-builds)
+  - [6. Backup and restore the VM](#6-backup-and-restore-the-vm)
+  - [Capturing evidence for reports](#capturing-evidence-for-reports)
+  - [Troubleshooting: problems I hit](#troubleshooting-problems-i-hit)
 
 > **Status note:** Sections 1-3 were done and confirmed. Section 4 onward is the plan as I set it up; update any step that turned out different in practice (and log it in `docs/notes/dev_log.md`).
 
@@ -143,6 +144,7 @@ ssh <host-user>@<mac-ip>
 ```
 
 Notes:
+
 - Both computers must be on the same network.
 - If the host sleeps or the lid closes, the SSH session drops. Change the lid-close behavior in power settings or leave the lid open.
 - VS Code's **Remote - SSH** extension ("Connect to Host", same `user@ip`) edits files directly on the host.
@@ -208,7 +210,7 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL   # dev can use sudo without a password prompt
     shell: /bin/bash
     lock_passwd: false
-    plain_text_passwd: CHANGE-ME
+    plain_text_passwd: <CHANGE-ME>
 package_update: true
 packages: [build-essential, gdb, lldb, strace, git]
 EOF

@@ -28,7 +28,7 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## Status
 
-- [ ] Hello-world kernel module
+- [x] Hello-world kernel module
 - [ ] Module analysis (`modinfo`, `nm`, `readelf`, `objdump`)
 - [ ] Character device registered with logging
 - [ ] Kernel buffer with `copy_to_user` / `copy_from_user`
@@ -55,16 +55,16 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## How it works
 
+> **Current behavior:** `read` returns 0 bytes (end of file) and `write` reports success but discards the data. Real buffering with `copy_to_user` and `copy_from_user` arrives in stage 4.
+
 ### Data flow
 
-```text
-user program        kernel                      driver module
------------         ------                      -------------
-open("/dev/X")  ->  syscall  ->  VFS lookup ->  open handler
-write(fd, buf)  ->  syscall  ->  VFS         -> write handler -> copy_from_user -> kernel buffer
-read(fd, buf)   ->  syscall  ->  VFS         -> read handler  -> copy_to_user   -> user buffer
-close(fd)       ->  syscall  ->  VFS         -> release handler
-```
+| user program | kernel | driver module |
+| ----------- | ------ | ------------- |
+| open("/dev/X") -> | syscall -> VFS lookup -> | open handler |
+| write(fd, buf) -> | syscall -> VFS -> | write handler -> copy_from_user -> kernel buffer |
+| read(fd, buf) -> | syscall ->  VFS -> | read handler -> copy_to_user -> user buffer |
+| close(fd) -> | syscall -> VFS -> | release handler |
 
 The kernel cannot trust a pointer handed to it by a user program, since user and kernel space are separate address spaces. `copy_from_user` and `copy_to_user` validate the user address and copy the data safely, which is the central idea of the driver.
 
@@ -185,6 +185,8 @@ lldb ./test_driver
 ---
 
 ## Testing
+
+*Stage 3 has not been run yet. Results will be added after the module is loaded in the test VM.*
 
 There is no automated test framework; testing is done by running the module and test program and checking results manually.
 

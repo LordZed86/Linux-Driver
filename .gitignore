@@ -22,3 +22,9 @@ a.out
 # Debugger and analysis output
 *.dSYM/
 core
+
+user-data
+*.pem
+*.key
+.env
+private/
