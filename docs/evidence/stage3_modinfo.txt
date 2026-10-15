@@ -1,0 +1,10 @@
+filename:       ~/Repos/Linux-Driver/module/mychardev.ko
+version:        0.2
+description:    Virtual character device driver for CS 370
+author:         Kellen Jones
+license:        GPL
+srcversion:     3C237EF9442B41105B3E3A6
+depends:        
+name:           mychardev
+retpoline:      Y
+vermagic:       7.0.0-34-generic SMP preempt mod_unload modversions 

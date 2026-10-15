@@ -1,0 +1,288 @@
+
+mychardev.ko:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <__pfx_mychardev_release>:
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+
+0000000000000010 <mychardev_release>:
+  10:	e8 00 00 00 00       	call   15 <mychardev_release+0x5>
+  15:	55                   	push   %rbp
+  16:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 1e <mychardev_release+0xe>
+  1d:	00 
+  1e:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  25:	8b b0 f0 0a 00 00    	mov    0xaf0(%rax),%esi
+  2b:	48 8d 90 10 0d 00 00 	lea    0xd10(%rax),%rdx
+  32:	48 89 e5             	mov    %rsp,%rbp
+  35:	e8 00 00 00 00       	call   3a <mychardev_release+0x2a>
+  3a:	31 c0                	xor    %eax,%eax
+  3c:	5d                   	pop    %rbp
+  3d:	31 d2                	xor    %edx,%edx
+  3f:	31 f6                	xor    %esi,%esi
+  41:	31 ff                	xor    %edi,%edi
+  43:	e9 00 00 00 00       	jmp    48 <mychardev_release+0x38>
+  48:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+  4f:	00 
+
+0000000000000050 <__pfx_mychardev_open>:
+  50:	90                   	nop
+  51:	90                   	nop
+  52:	90                   	nop
+  53:	90                   	nop
+  54:	90                   	nop
+  55:	90                   	nop
+  56:	90                   	nop
+  57:	90                   	nop
+  58:	90                   	nop
+  59:	90                   	nop
+  5a:	90                   	nop
+  5b:	90                   	nop
+  5c:	90                   	nop
+  5d:	90                   	nop
+  5e:	90                   	nop
+  5f:	90                   	nop
+
+0000000000000060 <mychardev_open>:
+  60:	e8 00 00 00 00       	call   65 <mychardev_open+0x5>
+  65:	55                   	push   %rbp
+  66:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 6e <mychardev_open+0xe>
+  6d:	00 
+  6e:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  75:	8b b0 f0 0a 00 00    	mov    0xaf0(%rax),%esi
+  7b:	48 8d 90 10 0d 00 00 	lea    0xd10(%rax),%rdx
+  82:	48 89 e5             	mov    %rsp,%rbp
+  85:	e8 00 00 00 00       	call   8a <mychardev_open+0x2a>
+  8a:	31 c0                	xor    %eax,%eax
+  8c:	5d                   	pop    %rbp
+  8d:	31 d2                	xor    %edx,%edx
+  8f:	31 f6                	xor    %esi,%esi
+  91:	31 ff                	xor    %edi,%edi
+  93:	e9 00 00 00 00       	jmp    98 <mychardev_open+0x38>
+  98:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+  9f:	00 
+
+00000000000000a0 <__pfx_mychardev_write>:
+  a0:	90                   	nop
+  a1:	90                   	nop
+  a2:	90                   	nop
+  a3:	90                   	nop
+  a4:	90                   	nop
+  a5:	90                   	nop
+  a6:	90                   	nop
+  a7:	90                   	nop
+  a8:	90                   	nop
+  a9:	90                   	nop
+  aa:	90                   	nop
+  ab:	90                   	nop
+  ac:	90                   	nop
+  ad:	90                   	nop
+  ae:	90                   	nop
+  af:	90                   	nop
+
+00000000000000b0 <mychardev_write>:
+  b0:	e8 00 00 00 00       	call   b5 <mychardev_write+0x5>
+  b5:	55                   	push   %rbp
+  b6:	48 89 d6             	mov    %rdx,%rsi
+  b9:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  c0:	48 89 e5             	mov    %rsp,%rbp
+  c3:	53                   	push   %rbx
+  c4:	48 89 d3             	mov    %rdx,%rbx
+  c7:	e8 00 00 00 00       	call   cc <mychardev_write+0x1c>
+  cc:	48 89 d8             	mov    %rbx,%rax
+  cf:	5b                   	pop    %rbx
+  d0:	5d                   	pop    %rbp
+  d1:	31 d2                	xor    %edx,%edx
+  d3:	31 f6                	xor    %esi,%esi
+  d5:	31 ff                	xor    %edi,%edi
+  d7:	e9 00 00 00 00       	jmp    dc <mychardev_write+0x2c>
+  dc:	0f 1f 40 00          	nopl   0x0(%rax)
+
+00000000000000e0 <__pfx_mychardev_read>:
+  e0:	90                   	nop
+  e1:	90                   	nop
+  e2:	90                   	nop
+  e3:	90                   	nop
+  e4:	90                   	nop
+  e5:	90                   	nop
+  e6:	90                   	nop
+  e7:	90                   	nop
+  e8:	90                   	nop
+  e9:	90                   	nop
+  ea:	90                   	nop
+  eb:	90                   	nop
+  ec:	90                   	nop
+  ed:	90                   	nop
+  ee:	90                   	nop
+  ef:	90                   	nop
+
+00000000000000f0 <mychardev_read>:
+  f0:	e8 00 00 00 00       	call   f5 <mychardev_read+0x5>
+  f5:	55                   	push   %rbp
+  f6:	48 89 d6             	mov    %rdx,%rsi
+  f9:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+ 100:	48 89 e5             	mov    %rsp,%rbp
+ 103:	e8 00 00 00 00       	call   108 <mychardev_read+0x18>
+ 108:	31 c0                	xor    %eax,%eax
+ 10a:	5d                   	pop    %rbp
+ 10b:	31 d2                	xor    %edx,%edx
+ 10d:	31 f6                	xor    %esi,%esi
+ 10f:	31 ff                	xor    %edi,%edi
+ 111:	e9 00 00 00 00       	jmp    116 <mychardev_read+0x26>
+
+Disassembly of section .init.text:
+
+0000000000000000 <__pfx_init_module>:
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+
+0000000000000010 <init_module>:
+  10:	e8 00 00 00 00       	call   15 <init_module+0x5>
+  15:	55                   	push   %rbp
+  16:	31 f6                	xor    %esi,%esi
+  18:	48 c7 c1 00 00 00 00 	mov    $0x0,%rcx
+  1f:	ba 01 00 00 00       	mov    $0x1,%edx
+  24:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  2b:	48 89 e5             	mov    %rsp,%rbp
+  2e:	53                   	push   %rbx
+  2f:	e8 00 00 00 00       	call   34 <init_module+0x24>
+  34:	85 c0                	test   %eax,%eax
+  36:	79 13                	jns    4b <init_module+0x3b>
+  38:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  3f:	89 c3                	mov    %eax,%ebx
+  41:	e8 00 00 00 00       	call   46 <init_module+0x36>
+  46:	e9 04 01 00 00       	jmp    14f <init_module+0x13f>
+  4b:	8b 35 00 00 00 00    	mov    0x0(%rip),%esi        # 51 <init_module+0x41>
+  51:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  58:	89 f2                	mov    %esi,%edx
+  5a:	c1 ee 14             	shr    $0x14,%esi
+  5d:	81 e2 ff ff 0f 00    	and    $0xfffff,%edx
+  63:	e8 00 00 00 00       	call   68 <init_module+0x58>
+  68:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+  6f:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  76:	e8 00 00 00 00       	call   7b <init_module+0x6b>
+  7b:	8b 35 00 00 00 00    	mov    0x0(%rip),%esi        # 81 <init_module+0x71>
+  81:	ba 01 00 00 00       	mov    $0x1,%edx
+  86:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  8d:	48 c7 05 00 00 00 00 	movq   $0x0,0x0(%rip)        # 98 <init_module+0x88>
+  94:	00 00 00 00 
+  98:	e8 00 00 00 00       	call   9d <init_module+0x8d>
+  9d:	89 c3                	mov    %eax,%ebx
+  9f:	85 c0                	test   %eax,%eax
+  a1:	79 11                	jns    b4 <init_module+0xa4>
+  a3:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  aa:	e8 00 00 00 00       	call   af <init_module+0x9f>
+  af:	e9 8b 00 00 00       	jmp    13f <init_module+0x12f>
+  b4:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  bb:	e8 00 00 00 00       	call   c0 <init_module+0xb0>
+  c0:	48 89 05 00 00 00 00 	mov    %rax,0x0(%rip)        # c7 <init_module+0xb7>
+  c7:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+  cd:	76 10                	jbe    df <init_module+0xcf>
+  cf:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  d6:	89 c3                	mov    %eax,%ebx
+  d8:	e8 00 00 00 00       	call   dd <init_module+0xcd>
+  dd:	eb 54                	jmp    133 <init_module+0x123>
+  df:	8b 15 00 00 00 00    	mov    0x0(%rip),%edx        # e5 <init_module+0xd5>
+  e5:	31 c9                	xor    %ecx,%ecx
+  e7:	31 f6                	xor    %esi,%esi
+  e9:	48 89 c7             	mov    %rax,%rdi
+  ec:	49 c7 c0 00 00 00 00 	mov    $0x0,%r8
+  f3:	e8 00 00 00 00       	call   f8 <init_module+0xe8>
+  f8:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+  fe:	76 1c                	jbe    11c <init_module+0x10c>
+ 100:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+ 107:	89 c3                	mov    %eax,%ebx
+ 109:	e8 00 00 00 00       	call   10e <init_module+0xfe>
+ 10e:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 115 <init_module+0x105>
+ 115:	e8 00 00 00 00       	call   11a <init_module+0x10a>
+ 11a:	eb 17                	jmp    133 <init_module+0x123>
+ 11c:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+ 123:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+ 12a:	31 db                	xor    %ebx,%ebx
+ 12c:	e8 00 00 00 00       	call   131 <init_module+0x121>
+ 131:	eb 1c                	jmp    14f <init_module+0x13f>
+ 133:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+ 13a:	e8 00 00 00 00       	call   13f <init_module+0x12f>
+ 13f:	8b 3d 00 00 00 00    	mov    0x0(%rip),%edi        # 145 <init_module+0x135>
+ 145:	be 01 00 00 00       	mov    $0x1,%esi
+ 14a:	e8 00 00 00 00       	call   14f <init_module+0x13f>
+ 14f:	89 d8                	mov    %ebx,%eax
+ 151:	5b                   	pop    %rbx
+ 152:	5d                   	pop    %rbp
+ 153:	31 d2                	xor    %edx,%edx
+ 155:	31 c9                	xor    %ecx,%ecx
+ 157:	31 f6                	xor    %esi,%esi
+ 159:	31 ff                	xor    %edi,%edi
+ 15b:	45 31 c0             	xor    %r8d,%r8d
+ 15e:	e9 00 00 00 00       	jmp    163 <mychardev_read+0x73>
+
+Disassembly of section .exit.text:
+
+0000000000000000 <__pfx_cleanup_module>:
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+
+0000000000000010 <cleanup_module>:
+  10:	8b 35 00 00 00 00    	mov    0x0(%rip),%esi        # 16 <cleanup_module+0x6>
+  16:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 1d <cleanup_module+0xd>
+  1d:	55                   	push   %rbp
+  1e:	48 89 e5             	mov    %rsp,%rbp
+  21:	e8 00 00 00 00       	call   26 <cleanup_module+0x16>
+  26:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 2d <cleanup_module+0x1d>
+  2d:	e8 00 00 00 00       	call   32 <cleanup_module+0x22>
+  32:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  39:	e8 00 00 00 00       	call   3e <cleanup_module+0x2e>
+  3e:	8b 3d 00 00 00 00    	mov    0x0(%rip),%edi        # 44 <cleanup_module+0x34>
+  44:	be 01 00 00 00       	mov    $0x1,%esi
+  49:	e8 00 00 00 00       	call   4e <cleanup_module+0x3e>
+  4e:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+  55:	e8 00 00 00 00       	call   5a <cleanup_module+0x4a>
+  5a:	5d                   	pop    %rbp
+  5b:	31 c0                	xor    %eax,%eax
+  5d:	31 f6                	xor    %esi,%esi
+  5f:	31 ff                	xor    %edi,%edi
+  61:	e9 00 00 00 00       	jmp    66 <__UNIQUE_ID_modinfo_323+0x3>
