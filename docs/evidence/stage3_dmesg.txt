@@ -1,0 +1,11 @@
+[   53.263763] mychardev: loading out-of-tree module taints kernel.
+[   53.263827] mychardev: module verification failed: signature and/or required key missing - tainting kernel
+[   53.264056] mychardev: allocated major 239, minor 0
+[   53.264329] mychardev: module loaded, /dev/mychardev created
+[  222.023502] mychardev: open by pid 1581 (tee)
+[  222.023724] mychardev: write of 6 bytes received
+[  222.024040] mychardev: release by pid 1581 (tee)
+[  222.085122] mychardev: open by pid 1590 (cat)
+[  222.085209] mychardev: read of 65536 bytes requested
+[  222.085327] mychardev: release by pid 1590 (cat)
+[  222.140615] mychardev: module unloaded
