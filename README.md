@@ -73,16 +73,16 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 
 ### CS 370 concepts
 
-| CS 370 concept                 | Where it shows up in this project                                                                 |
-| ------------------------------ | ------------------------------------------------------------------------------------------------- |
-| System calls                   | `tee` and `cat` reach the driver through `open`, `read`, `write`, and `close`                     |
-| Registers                      | In `objdump`, the arguments to `alloc_chrdev_region` are set up in `rdi`, `esi`, `edx`, and `rcx` |
+| CS 370 concept | Where it shows up in this project |
+| --- | --- |
+| System calls | `tee` and `cat` reach the driver through `open`, `read`, `write`, and `close` |
+| Registers | In `objdump`, the arguments to `alloc_chrdev_region` are set up in `rdi`, `esi`, `edx`, and `rcx` |
 | Number systems and bitwise ops | `MAJOR()`/`MINOR()` compile to `shr $0x14` and `and $0xfffff`; `crw-------` is octal 600; hex addresses in `nm`/`objdump` |
-| Assembly and control flow      | `if (ret < 0)` checks compile to `test` plus a conditional jump (`jns`), with a cleanup path on failure |
-| Compilation and object files   | `make` builds a relocatable ELF `.ko`; `readelf` shows type `REL`, and `.rela.*` sections hold the relocations the loader patches |
-| Processes                      | `dmesg` lines name the pid and command that used the device (`tee`, `cat`)                        |
-| User vs. kernel space          | Separate address spaces; safe copying between them (stage 4)                                      |
-| The stack                      | Planned: stack frames in the test program with lldb                                               |
+| Assembly and control flow | `if (ret < 0)` checks compile to `test` plus a conditional jump (`jns`), with a cleanup path on failure |
+| Compilation and object files | `make` builds a relocatable ELF `.ko`; `readelf` shows type `REL`, and `.rela.*` sections hold the relocations the loader patches |
+| Processes | `dmesg` lines name the pid and command that used the device (`tee`, `cat`) |
+| User vs. kernel space | Separate address spaces; safe copying between them (stage 4) |
+| The stack | Planned: stack frames in the test program with lldb |
 
 *Note: `mychardev_init` shows up as `init_module` in `objdump` output, because both names refer to the same function.*
 
