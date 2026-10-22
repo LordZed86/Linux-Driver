@@ -90,7 +90,7 @@ static int __init mychardev_init(void)
 	pr_info("mychardev: allocated major %d, minor %d\n",
 			MAJOR(dev_num), MINOR(dev_num));
 
-	/* Attach our file operations and make the device live. */
+	/* Attach file operations and make the device live. */
 	cdev_init(&my_cdev, &mychardev_fops);
 	my_cdev.owner = THIS_MODULE;
 	ret = cdev_add(&my_cdev, dev_num, 1);
