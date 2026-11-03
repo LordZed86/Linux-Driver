@@ -143,3 +143,7 @@ I would like to have something working for my midterm presentation but I dont ex
 | 3 | Oct 29 - Nov 11 | Character devices, device numbers, and the `file_operations` structure | Register the device with stubbed `open`, `read`, `write`, `close` that log to `dmesg` |
 | 4 | Nov 12 - Nov 24 | User vs. kernel pointers, `copy_to_user`, `copy_from_user` | Add the kernel buffer and the user-space test program; capture `strace` and lldb evidence |
 | 5 | Nov 25 - Dec 3 | Review and polish | Edge-case testing, README, final report and demo prep; stretch features only if everything else works |
+
+## 12. Scope update (November 3)
+
+Feedback on the midterm presentation suggested protecting the kernel buffer with a mutex. The mutex was already a stretch goal in section 4, and it fits the project because stage 4 adds a buffer shared by every process that opens the device. It is now part of the core scope, built right after the basic buffer works in stage 4. The testing approach in section 10 gains one test: several processes reading and writing at the same time, with and without the lock. The remaining stretch goals (an ioctl command and an open counter) are unchanged.

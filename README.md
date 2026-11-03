@@ -14,18 +14,21 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## What it does
 
-**Working so far (midterm):**
+**Working and tested (stage 3, midterm):**
 
 - Builds as a loadable kernel module (`mychardev.ko`) against the running kernel's headers
 - Registers a virtual character device (`/dev/mychardev`) when the module loads, and removes it on unload
 - Implements `open`, `read`, `write`, and `close` (release) handlers that log each operation, including the calling process's pid and name, to the kernel log
 - Tested by loading it in a QEMU/KVM virtual machine and driving it with `echo`, `tee`, and `cat`
 
-**Planned (stage 4):**
+**Stage 4 (code written, testing in progress):**
 
-- Store data in a small fixed-size kernel buffer
-- Move data between user space and kernel space with `copy_from_user` and `copy_to_user`
-- Extend the user-space test program to write a string, read it back, and print buffer addresses
+- Stores up to 1024 bytes in a fixed-size kernel buffer shared by every process that opens the device
+- Moves data between user space and kernel space with `copy_from_user` and `copy_to_user`
+- Protects the buffer with a mutex, so concurrent readers and writers cannot corrupt it or see half-written data
+- Handles edge cases: an oversized write is shortened and then fails with `ENOSPC`, and a bad user pointer returns `EFAULT` instead of crashing the kernel
+- User-space test program writes a string, reads it back, prints buffer addresses, and runs the edge-case and concurrency tests
+- Two optional load parameters for testing: `use_lock=0` turns the mutex off, and `verbose=0` silences the per-operation log lines
 
 **Analysis:** the module is examined with `readelf`, `nm`, `objdump`, `strace`, and lldb to connect the code to CS 370 concepts. Saved output is in `docs/evidence/`.
 
@@ -39,9 +42,10 @@ Built for CS 370 — Computer Systems and Architecture.
 - [x] Stage 1 analysis: build output, `modinfo`, `nm`, `readelf`, `objdump` (`docs/evidence/`)
 - [x] Character device with `open`/`release`/`read`/`write` logging (stage 3), built on kernel 7.0 and loaded in the VM
 - [x] Stage 3 analysis saved (`docs/evidence/stage3_*`)
-- [ ] Kernel buffer with `copy_to_user` / `copy_from_user` (stage 4)
-- [ ] User-space test program that writes and reads (currently only opens and closes the device)
-- [ ] Edge-case testing (empty and oversized buffers)
+- [ ] Kernel buffer with `copy_to_user` / `copy_from_user` (stage 4): code written, testing in progress
+- [ ] Mutex around the buffer (added after midterm feedback): code written, testing in progress
+- [ ] User-space test program that writes, reads back, and runs edge-case and race tests: code written, testing in progress
+- [ ] Edge-case testing (empty buffer, oversized write, bad pointer)
 - [ ] `strace` and lldb evidence
 
 ---
@@ -56,33 +60,35 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## How it works
 
-> **Current behavior:** `read` returns 0 bytes (end of file) and `write` reports success but discards the data. Real buffering with `copy_to_user` and `copy_from_user` arrives in stage 4.
+> **Current behavior (stage 4):** `write` copies data into a 1024-byte kernel buffer and `read` returns it, then 0 bytes (end of file). A mutex lets only one process use the buffer at a time. In stage 3 (the midterm build), `read` returned 0 and `write` discarded the data.
 
 ### Data flow
 
-| User program      | Kernel                   | Driver module                                      |
-| ----------------- | ------------------------ | -------------------------------------------------- |
-| `open("/dev/X")`  | syscall, then VFS lookup | open handler                                       |
-| `write(fd, buf)`  | syscall, then VFS        | write handler, `copy_from_user` into kernel buffer |
-| `read(fd, buf)`   | syscall, then VFS        | read handler, `copy_to_user` into user buffer      |
-| `close(fd)`       | syscall, then VFS        | release handler                                    |
+| User program     | Kernel                   | Driver module                                      |
+| ---------------- | ------------------------ | -------------------------------------------------- |
+| `open("/dev/X")` | syscall, then VFS lookup | open handler                                       |
+| `write(fd, buf)` | syscall, then VFS        | write handler, `copy_from_user` into kernel buffer |
+| `read(fd, buf)`  | syscall, then VFS        | read handler, `copy_to_user` into user buffer      |
+| `close(fd)`      | syscall, then VFS        | release handler                                    |
 
-*The `copy_*` steps are the stage 4 design; stage 3 only logs.*
+*Stage 3 only logged these operations; stage 4 added the buffer and the `copy_*` calls.*
 
 The kernel cannot trust a pointer handed to it by a user program, since user and kernel space are separate address spaces. `copy_from_user` and `copy_to_user` validate the user address and copy the data safely, which is the central idea of the driver.
 
 ### CS 370 concepts
 
-| CS 370 concept | Where it shows up in this project |
-| --- | --- |
-| System calls | `tee` and `cat` reach the driver through `open`, `read`, `write`, and `close` |
-| Registers | In `objdump`, the arguments to `alloc_chrdev_region` are set up in `rdi`, `esi`, `edx`, and `rcx` |
-| Number systems and bitwise ops | `MAJOR()`/`MINOR()` compile to `shr $0x14` and `and $0xfffff`; `crw-------` is octal 600; hex addresses in `nm`/`objdump` |
-| Assembly and control flow | `if (ret < 0)` checks compile to `test` plus a conditional jump (`jns`), with a cleanup path on failure |
-| Compilation and object files | `make` builds a relocatable ELF `.ko`; `readelf` shows type `REL`, and `.rela.*` sections hold the relocations the loader patches |
-| Processes | `dmesg` lines name the pid and command that used the device (`tee`, `cat`) |
-| User vs. kernel space | Separate address spaces; safe copying between them (stage 4) |
-| The stack | Planned: stack frames in the test program with lldb |
+| CS 370 concept                 | Where it shows up in this project                                                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| System calls                   | `tee` and `cat` reach the driver through `open`, `read`, `write`, and `close`                                                        |
+| Registers                      | In `objdump`, the arguments to `alloc_chrdev_region` are set up in `rdi`, `esi`, `edx`, and `rcx`                                    |
+| Number systems and bitwise ops | `MAJOR()`/`MINOR()` compile to `shr $0x14` and `and $0xfffff`; `crw-------` is octal 600; hex addresses in `nm`/`objdump`            |
+| Assembly and control flow      | `if (ret < 0)` checks compile to `test` plus a conditional jump (`jns`), with a cleanup path on failure                              |
+| Compilation and object files   | `make` builds a relocatable ELF `.ko`; `readelf` shows type `REL`, and `.rela.*` sections hold the relocations the loader patches    |
+| Processes                      | `dmesg` lines name the pid and command that used the device (`tee`, `cat`)                                                           |
+| User vs. kernel space          | Separate address spaces; `copy_to_user` / `copy_from_user` check user pointers and return `EFAULT` on a bad one                      |
+| Concurrency and shared memory  | Several processes share one kernel buffer; a mutex keeps one process inside it at a time, so a read never sees a half-written buffer |
+| Memory                         | Fixed-size buffer with bounds checks: short writes, then `ENOSPC` when full                                                          |
+| The stack                      | Planned: stack frames in the test program with lldb                                                                                  |
 
 *Note: `mychardev_init` shows up as `init_module` in `objdump` output, because both names refer to the same function.*
 
@@ -92,7 +98,6 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 
 ### Stretch goals (only if the core is finished)
 
-- **Mutex around the buffer** — protect against concurrent access
 - **`ioctl` command** — clear the buffer or report its size
 - **Open counter** — track how many times the device has been opened
 - **Kernel debugging setup** — attach a debugger to a kernel running in QEMU
@@ -107,7 +112,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 │   ├── mychardev.c            # Kernel module: registers device, implements file operations
 │   └── Makefile               # Builds the module with the kernel's build system
 ├── user/
-│   └── test_driver.c          # User-space test program (opens and closes the device for now)
+│   └── test_driver.c          # User-space test program (write/read back, edge cases, race test)
 ├── docs/
 │   ├── screenshots/           # Terminal captures used in the report
 │   ├── evidence/              # Saved readelf / nm / objdump / dmesg output
@@ -162,17 +167,23 @@ sudo cat /dev/mychardev
 sudo dmesg | grep mychardev
 ```
 
-The log shows open, write (6 bytes), and release for `tee`, then open, read, and release for `cat`. `cat` prints nothing, because `read` returns 0 bytes in stage 3.
+The log shows open, write (6 bytes stored), and release for `tee`, then open, read, and release for `cat`. `cat` prints `hello`, because stage 4 keeps the data in the kernel buffer and returns it on read. (In stage 3, `cat` printed nothing.)
 
-**4. Build and run the test program** (opens and closes the device; read and write are added in stage 4):
+**4. Build and run the test program:**
 
 ```bash
 cd ../user
 gcc -std=c99 -g -Wall -o test_driver test_driver.c
-sudo ./test_driver
+sudo ./test_driver empty   # run right after loading: read returns 0 (end of file)
+sudo ./test_driver rw      # write a string, reopen, read it back
+sudo ./test_driver big     # 2000 bytes into a 1024-byte buffer: short write, then ENOSPC
+sudo ./test_driver fault   # bad pointer: the driver returns EFAULT
+sudo ./test_driver race    # 2 writers and 2 readers; counts torn reads
 ```
 
 The device node is owned by root (`crw-------`), so the program needs `sudo`.
+
+**Mutex demo:** load with `sudo insmod mychardev.ko verbose=0` and run `race`; there should be 0 torn reads. Then unload, reload with `verbose=0 use_lock=0`, and run it again. Torn reads may appear, because readers can catch the buffer halfway through a write. This needs more than one CPU core, so it may not show up on every run.
 
 **5. Unload the module:**
 
@@ -209,19 +220,24 @@ lldb ./test_driver
 
 ## Testing
 
-There is no automated test framework; testing is done by running the module and checking results manually. Results below are from the VM running Ubuntu 26.04.1 (kernel 7.0.0-38-generic).
+There is no automated test framework; testing is done by running the module and checking results manually. Results below are from the VM running Ubuntu 26.04.1 (kernel 7.0.0-38-generic). Rows marked Pass are stage 3 results; rows marked Pending are stage 4 and will be filled in after testing.
 
-| Test                                          | Expected result                               | Result                                        |
-| --------------------------------------------- | --------------------------------------------- | --------------------------------------------- |
-| Build on kernel 7.0                           | `make` produces `mychardev.ko`                | Pass (environment warnings only)              |
-| Load the module                               | Module loads, major number allocated          | Pass: major 239, minor 0                      |
-| Device node appears                           | `/dev/mychardev` exists after `insmod`        | Pass: `crw------- root`, 239, 0               |
-| Open and close the device                     | `open` and release messages appear in `dmesg` | Pass: lines name pid and command              |
-| Write                                         | Write handler receives the bytes              | Pass: 6 bytes ("hello" plus newline)          |
-| Read                                          | Read handler is called, returns 0 bytes       | Pass: `cat` requested 65536 bytes, got EOF    |
-| Unload the module                             | `module unloaded` is logged                   | Pass                                          |
-| Write larger than the buffer                  | Rejected or truncated safely                  | Not yet (needs the stage 4 buffer)            |
-| Open the device when the module is not loaded | `open` fails with "No such file or directory" | Not yet                                       |
+| Test                                          | Expected result                               | Result                                     |
+| --------------------------------------------- | --------------------------------------------- | ------------------------------------------ |
+| Build on kernel 7.0                           | `make` produces `mychardev.ko`                | Pass (environment warnings only)           |
+| Load the module                               | Module loads, major number allocated          | Pass: major 239, minor 0                   |
+| Device node appears                           | `/dev/mychardev` exists after `insmod`        | Pass: `crw------- root`, 239, 0            |
+| Open and close the device                     | `open` and release messages appear in `dmesg` | Pass: lines name pid and command           |
+| Write                                         | Write handler receives the bytes              | Pass: 6 bytes ("hello" plus newline)       |
+| Read                                          | Read handler is called, returns 0 bytes       | Pass: `cat` requested 65536 bytes, got EOF |
+| Unload the module                             | `module unloaded` is logged                   | Pass                                       |
+| Write, then read back                         | Data read matches data written                | Pending (`test_driver rw`)                 |
+| Read with nothing stored                      | Returns 0 (end of file)                       | Pending (`test_driver empty`)              |
+| Write larger than the buffer                  | Short write of 1024 bytes, then `ENOSPC`      | Pending (`test_driver big`)                |
+| Bad user pointer                              | `EFAULT`, no kernel crash                     | Pending (`test_driver fault`)              |
+| Concurrent readers and writers, lock on       | 0 torn reads                                  | Pending (`test_driver race`)               |
+| Concurrent readers and writers, `use_lock=0`  | Torn reads may appear                         | Pending                                    |
+| Open the device when the module is not loaded | `open` fails with "No such file or directory" | Not yet                                    |
 
 ---
 
@@ -237,13 +253,13 @@ There is no automated test framework; testing is done by running the module and 
 
 ## Documentation
 
-| Document                                  | Description                                                        |
-| ----------------------------------------- | ------------------------------------------------------------------ |
-| [Project Proposal](docs/proposal.md)      | Original proposal submitted for CS 370                             |
-| [Midterm Report](docs/midterm_report.pdf) | Progress report with technical evidence                            |
-| [Setup Guide](docs/setup_guide.md)        | How the development environment and test VM are set up             |
-| [Dev Log](docs/notes/dev_log.md)          | Chronological record of decisions, bugs, and fixes                 |
-| [Evidence](docs/evidence/)                | Saved tool output (`readelf`, `objdump`, `nm`, `dmesg`)            |
+| Document                                  | Description                                             |
+| ----------------------------------------- | ------------------------------------------------------- |
+| [Project Proposal](docs/proposal.md)      | Original proposal submitted for CS 370                  |
+| [Midterm Report](docs/midterm_report.pdf) | Progress report with technical evidence                 |
+| [Setup Guide](docs/setup_guide.md)        | How the development environment and test VM are set up  |
+| [Dev Log](docs/notes/dev_log.md)          | Chronological record of decisions, bugs, and fixes      |
+| [Evidence](docs/evidence/)                | Saved tool output (`readelf`, `objdump`, `nm`, `dmesg`) |
 
 ---
 
