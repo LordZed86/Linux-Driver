@@ -85,3 +85,15 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - On the host: build stage 3, then save `stage3_` evidence including `objdump -dr` of the handlers and the generated assembly (redacting paths).
   - Examine the test program in lldb: stack frame (`rsp`, `rbp`, `rip`) and the registers at the `open` call.
   - Write the stage 4 test program so all four handlers fire, fix the VM login (likely rebuild with an SSH key), then start the midterm report. Midterm is Oct 21.
+
+### 2026-11-03 - Midterm feedback and stage 4 code
+
+- **What I did:** Presented the midterm. The instructor suggested adding a mutex around the kernel buffer. Wrote the stage 4 module (1024-byte kernel buffer, `copy_to_user` / `copy_from_user`, mutex) and a new user-space test program with `rw`, `empty`, `big`, `fault`, and `race` modes. Updated the README, proposal, and code walkthrough.
+- **What happened (output, errors):** Not built or tested yet. Code written but not compiled against the kernel headers.
+- **What I learned / how I fixed it:**
+  - A mutex (not a spinlock) fits here because `copy_to_user` and `copy_from_user` can sleep on a page fault.
+  - `mutex_lock_interruptible()` lets a waiting process be interrupted by a signal; the handler returns `-ERESTARTSYS` in that case.
+  - Write semantics: data is stored at the file position, the stored length becomes position plus bytes written, an oversized write is shortened, and a full buffer returns `-ENOSPC`. A bad pointer returns `-EFAULT`.
+  - Added two read-only module parameters, `use_lock` and `verbose`, so the mutex can be turned off to compare, and logging can be silenced for the stress test.
+- **Decisions:** Mutex moved from stretch goal to core scope. Keeping the name `mychardev` (rename dropped).
+- **Next:** Build in the VM, run each test mode, run `race` with the lock on and off, save output to `docs/evidence/`, take screenshots, then fill in the Pending rows in the README testing table.

@@ -53,7 +53,7 @@ Making a repo public publishes its **entire history**, not just the current file
 - [ ] Review every screenshot in `docs/screenshots/` for shell prompts (`user@hostname`), IP addresses, and file paths; crop or redact
 - [ ] Review everything in `docs/evidence/` (especially `dmesg` output, which can include hardware identifiers); trim to the lines that matter
 - [ ] Confirm `user-data` (VM password) and anything from `~/.ssh/` are **not** in the repo
-- [x] Confirm `.gitignore` also covers `user-data`, `*.pem`, `*.key`, `.env`, and any `private/` folder
+- [ ] Confirm `.gitignore` also covers `user-data`, `*.pem`, `*.key`, `.env`, and any `private/` folder
 - [ ] Run `git diff --staged` and read it before each commit
 
 ### Make it public
@@ -89,9 +89,9 @@ Making a repo public publishes its **entire history**, not just the current file
 
 ## 4. Honesty and attribution
 
-- [ ] Make the README **GenAI Attribution** section match how AI was actually used, and follow the course AI policy (if neccessary)
-- [ ] Keep `docs/notes/ai_use_log.md` up to date, with a row for each significant use (if necessary)
-- [x] Be able to explain every line of the module and test program in the demo
+- [ ] Make the README **GenAI Attribution** section match how AI was actually used, and follow the course AI policy
+- [ ] Keep `docs/notes/ai_use_log.md` up to date, with a row for each significant use
+- [ ] Be able to explain every line of the module and test program in the demo
 
 ---
 
@@ -102,7 +102,7 @@ Making a repo public publishes its **entire history**, not just the current file
 - [ ] **Midterm:** in-class demo prepared and rehearsed
 - [ ] **Final (Dec 3):** final report and demo integrating the second-half course concepts
 - [ ] **Final:** source code zip with a working README, submitted on Canvas
-- [ ] Stretch features (mutex, `ioctl`, open counter) only if the core is finished
+- [ ] Stretch features (`ioctl`, open counter) only if the core is finished (the mutex is now core scope)
 
 ---
 
