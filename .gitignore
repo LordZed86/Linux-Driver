@@ -7,7 +7,7 @@
 *.cmd
 .*.cmd
 .tmp_versions/
-Modules.symvers
+Module.symvers
 modules.order
 
 # User-space build output
@@ -27,4 +27,4 @@ user-data
 *.pem
 *.key
 .env
-private/Module.symvers
+private
