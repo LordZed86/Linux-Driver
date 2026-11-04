@@ -52,7 +52,7 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## Screenshots
 
-![Kernel log after loading the module and exercising each handler](docs/screenshots/stage3_dmesg.png)
+![Kernel log after loading the module and exercising each handler](docs/screenshots/stage3/Stage3_dmesg.png)
 
 *Stage 3 running: the module allocates major 239, minor 0 and creates `/dev/mychardev`. `tee` (pid 1581) and `cat` (pid 1590) trigger the open, write, read, and release handlers.*
 
