@@ -27,4 +27,4 @@ user-data
 *.pem
 *.key
 .env
-private/
+private/Module.symvers
