@@ -113,6 +113,8 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 │   └── Makefile               # Builds the module with the kernel's build system
 ├── user/
 │   └── test_driver.c          # User-space test program (write/read back, edge cases, race test)
+├── scripts/
+│   └── collect_stage4.sh      # Runs all stage 4 tests in the VM and saves evidence
 ├── docs/
 │   ├── screenshots/           # Terminal captures used in the report
 │   ├── evidence/              # Saved readelf / nm / objdump / dmesg output
@@ -178,8 +180,10 @@ sudo ./test_driver empty   # run right after loading: read returns 0 (end of fil
 sudo ./test_driver rw      # write a string, reopen, read it back
 sudo ./test_driver big     # 2000 bytes into a 1024-byte buffer: short write, then ENOSPC
 sudo ./test_driver fault   # bad pointer: the driver returns EFAULT
-sudo ./test_driver race    # 2 writers and 2 readers; counts torn reads
+sudo ./test_driver race    # 2 writers and 2 readers; counts torn reads (optional: race 10000)
 ```
+
+**Run everything at once:** from the repo root inside the VM, `./scripts/collect_stage4.sh` builds both programs, runs every test mode, runs `race` three times with the lock on and three times with it off, and saves all output (tests, `dmesg`, `strace`, `objdump`, `nm`, `readelf`) to `docs/evidence/stage4/`.
 
 The device node is owned by root (`crw-------`), so the program needs `sudo`.
 
