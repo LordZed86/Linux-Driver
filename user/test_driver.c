@@ -2,13 +2,15 @@
  * test_driver.c - user-space test program for /dev/mychardev (stage 4)
  *
  * Build:  gcc -std=c99 -Wall -Wextra -pedantic -o test_driver test_driver.c
- * Run:    sudo ./test_driver [rw [text] | empty | big | fault | race]
+ * Run:    sudo ./test_driver [rw [text] | empty | big | fault | race [n]]
  *
  *   rw     write a string, close, reopen, read it back (default)
  *   empty  read from the device with nothing stored (run right after insmod)
  *   big    write 2000 bytes into the 1024-byte buffer
  *   fault  pass a bad pointer to write(); the driver should answer EFAULT
- *   race   2 writers and 2 readers hammer the buffer; count torn reads
+ *   race [iterations]
+ *          2 writers and 2 readers hammer the buffer; count torn reads
+ *          (default 2000 iterations per process)
  */
 #define _POSIX_C_SOURCE 200809L
 
@@ -92,7 +94,13 @@ static int cmd_empty(void)
     n = read(fd, rbuf, sizeof rbuf);
     printf("read() on an empty buffer returned %zd (0 means end of file)\n", n);
     close(fd);
-    return n == 0 ? 0 : 1;
+    if (n == 0)
+    {
+        puts("PASS: empty buffer reads as end of file");
+        return 0;
+    }
+    puts("FAIL: expected 0 (run this right after loading the module)");
+    return 1;
 }
 
 /* ---- big: write more than the buffer holds ---------------------------- */
@@ -100,6 +108,7 @@ static int cmd_big(void)
 {
     char big[2000];
     ssize_t n1, n2;
+    int err;
     int fd = open(DEV, O_WRONLY);
 
     if (fd < 0)
@@ -121,11 +130,18 @@ static int cmd_big(void)
     }
     errno = 0;
     n2 = write(fd, big + n1, sizeof big - (size_t)n1);
+    err = errno; /* save now: printf and close may change errno */
     printf("second write returned %zd, errno = %d (%s)\n",
-           n2, errno, errno ? strerror(errno) : "none");
+           n2, err, err ? strerror(err) : "none");
     close(fd);
 
-    return (n1 == BUF_SIZE && n2 == -1 && errno == ENOSPC) ? 0 : 1;
+    if (n1 == BUF_SIZE && n2 == -1 && err == ENOSPC)
+    {
+        puts("PASS: short write, then ENOSPC");
+        return 0;
+    }
+    puts("FAIL: expected a 1024-byte write, then ENOSPC");
+    return 1;
 }
 
 /* ---- fault: bad user pointer ------------------------------------------ */
@@ -133,6 +149,7 @@ static int cmd_fault(void)
 {
     const void *bad = (const void *)(uintptr_t)1; /* not a valid address */
     ssize_t n;
+    int err;
     int fd = open(DEV, O_WRONLY);
 
     if (fd < 0)
@@ -142,11 +159,12 @@ static int cmd_fault(void)
     }
     errno = 0;
     n = write(fd, bad, 16);
+    err = errno; /* save now: printf and close may change errno */
     printf("write from address %p returned %zd, errno = %d (%s)\n",
-           bad, n, errno, strerror(errno));
+           bad, n, err, strerror(err));
     close(fd);
 
-    if (n == -1 && errno == EFAULT)
+    if (n == -1 && err == EFAULT)
     {
         puts("PASS: kernel rejected the bad pointer instead of crashing");
         return 0;
@@ -158,7 +176,9 @@ static int cmd_fault(void)
 /* ---- race: concurrent writers and readers ----------------------------- */
 #define WRITERS 2
 #define READERS 2
-#define ITER 2000
+#define DEFAULT_ITER 2000
+
+static int iter = DEFAULT_ITER;
 
 struct result
 {
@@ -171,7 +191,7 @@ static void writer_proc(int id)
     char fill[BUF_SIZE];
 
     memset(fill, 'A' + id, sizeof fill);
-    for (int i = 0; i < ITER; i++)
+    for (int i = 0; i < iter; i++)
     {
         int fd = open(DEV, O_WRONLY);
 
@@ -190,7 +210,7 @@ static void reader_proc(int wfd)
     struct result r = {0, 0};
     char buf[BUF_SIZE];
 
-    for (int i = 0; i < ITER; i++)
+    for (int i = 0; i < iter; i++)
     {
         int fd = open(DEV, O_RDONLY);
         ssize_t n;
@@ -225,14 +245,20 @@ static int cmd_race(void)
     char seed[BUF_SIZE];
     struct result r, total = {0, 0};
     int pfd[2];
-    int fd;
+    int fd, status, failed = 0;
 
     /* Start from a full, uniform buffer so every read should be 1024 bytes. */
     memset(seed, 'A', sizeof seed);
     fd = open(DEV, O_WRONLY);
-    if (fd < 0 || write(fd, seed, sizeof seed) != BUF_SIZE)
+    if (fd < 0)
+    {
+        perror("open for seeding");
+        return 1;
+    }
+    if (write(fd, seed, sizeof seed) != BUF_SIZE)
     {
         perror("seeding the buffer");
+        close(fd);
         return 1;
     }
     close(fd);
@@ -267,12 +293,19 @@ static int cmd_race(void)
         total.checked += r.checked;
         total.torn += r.torn;
     }
-    while (wait(NULL) > 0)
-        ;
+    /* A child that hit an error exits with status 1; don't hide that. */
+    while (wait(&status) > 0)
+        if (!WIFEXITED(status) || WEXITSTATUS(status) != 0)
+            failed++;
 
     printf("%d writers, %d readers, %d iterations each\n",
-           WRITERS, READERS, ITER);
+           WRITERS, READERS, iter);
     printf("reads checked: %d, torn reads: %d\n", total.checked, total.torn);
+    if (failed)
+    {
+        printf("FAIL: %d child process(es) hit an error\n", failed);
+        return 1;
+    }
     if (total.torn == 0)
     {
         puts("PASS: no torn reads");
@@ -295,9 +328,18 @@ int main(int argc, char **argv)
     if (strcmp(cmd, "fault") == 0)
         return cmd_fault();
     if (strcmp(cmd, "race") == 0)
+    {
+        if (argc > 2)
+            iter = atoi(argv[2]);
+        if (iter <= 0)
+        {
+            fprintf(stderr, "race: iterations must be a positive number\n");
+            return 2;
+        }
         return cmd_race();
+    }
 
-    fprintf(stderr, "usage: %s [rw [text] | empty | big | fault | race]\n",
+    fprintf(stderr, "usage: %s [rw [text] | empty | big | fault | race [n]]\n",
             argv[0]);
     return 2;
 }

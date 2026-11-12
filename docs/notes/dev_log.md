@@ -97,3 +97,15 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - Added two read-only module parameters, `use_lock` and `verbose`, so the mutex can be turned off to compare, and logging can be silenced for the stress test.
 - **Decisions:** Mutex moved from stretch goal to core scope. Keeping the name `mychardev` (rename dropped).
 - **Next:** Build in the VM, run each test mode, run `race` with the lock on and off, save output to `docs/evidence/`, take screenshots, then fill in the Pending rows in the README testing table.
+
+### 2026-11-12 - Test program fixes and evidence script
+
+- **What I did:**
+  - Reviewed the stage 4 module and test program before building them in the VM.
+  - Fixed the `big` and `fault` tests, which checked `errno` after calling `printf` and `close`; either call can change `errno`, so a correct result could be reported as a failure. The value is now saved right after `write`.
+  - The `race` test now checks each child's exit status, so a child that fails (for example, if `open` fails) is reported as a failure instead of silently lowering the read count. It also takes an optional iteration count (`race 10000`).
+  - Every test mode now prints a PASS or FAIL line.
+  - Wrote `scripts/collect_stage4.sh`, which builds the module and test program, runs each test, runs `race` with `use_lock=1` and `use_lock=0`, captures `strace` and `dmesg`, and saves everything (redacted) to `docs/evidence/stage4/`.
+- **What happened (output, errors):** Not run yet; the test program compiles cleanly with `-std=c99 -Wall -Wextra -pedantic`.
+- **What I learned / how I fixed it:** `errno` is only meaningful immediately after the call that failed; any later library call may overwrite it.
+- **Next:** Run the script in the VM (with at least 2 vCPUs, so the unlocked race can show torn reads), review the evidence, fill in the README testing table, then start the final report. Final is due Dec 3.
