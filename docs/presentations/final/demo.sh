@@ -7,7 +7,7 @@
 
 ROOT=$(cd "$(dirname "$0")/../../.." && pwd) || exit 1
 cd "$ROOT" || exit 1
-RACE_ITER=${RACE_ITER:-200000}
+RACE_ITER=${RACE_ITER:-500000}
 
 step() {            # print a heading, then wait for Enter
   echo

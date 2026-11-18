@@ -4,7 +4,7 @@ Each step has a **short** version (one or two sentences, if you're tight on time
 
 Script: `demo.sh` in this folder. Run it from the repo root inside the VM. Steps 9–10 reload the module with `verbose=0`, so the log stays quiet during the race test.
 
-**Backup plan:** if the unlocked race (step 10) shows 0 torn reads live, say so and show the saved runs in `docs/evidence/stage4/stage4_test_race_lock0_run*.txt`. Have a screen recording of a clean run ready in case the VM misbehaves on Zoom.
+**Backup plan:** if the unlocked race (step 10) shows 0 torn reads live, say so and show the saved runs in `docs/evidence/stage4/stage4_test_race_lock0_run*.txt` (run 1 had 7,647 torn reads). Have a screen recording of a clean run ready in case the VM misbehaves on Zoom.
 
 ---
 
@@ -93,16 +93,16 @@ hello
 ## Step 5: Test program round trip
 
 ```
-write buffer is at user address 0x7ffd...  (21 bytes)
+write buffer is at user address 0x5c65...  (21 bytes)
 write() returned 21
-read buffer is at user address 0x7ffd...
+read buffer is at user address 0x7fff...
 read() returned 21: "hello from user space"
 PASS: data read back matches data written
 ```
 
 **Short:** "My own C program does the same thing as tee and cat, but checks the result itself and prints PASS."
 
-**Full (user vs. kernel space):** "Look at the addresses: 0x7ff-something. Those are user-space addresses on the stack of my program. The kernel buffer lives at an address starting with 0xffff, in kernel space. The two can't see each other directly. My driver never dereferences the user pointer. It calls copy_from_user and copy_to_user, which check that the address really belongs to the calling process before copying."
+**Full (user vs. kernel space):** "Look at the two addresses. The read buffer, 0x7fff-something, is on my program's stack. The write buffer, 0x5c-something, is the string constant compiled into the program. Both are user-space addresses, and they change every run because of address randomization. The kernel buffer is at 0xffffffffc09a..., in kernel space. The two sides can't see each other directly. My driver never dereferences a user pointer; it calls copy_from_user and copy_to_user, which check that the address really belongs to the calling process before copying."
 
 ---
 
@@ -162,12 +162,12 @@ mychardev: release by pid ... (test_driver)
 
 ```
 mychardev: module loaded, /dev/mychardev created (buffer 1024 bytes, lock on)
-2 writers, 2 readers, 200000 iterations each
-reads checked: 400000, torn reads: 0
+2 writers, 2 readers, 500000 iterations each
+reads checked: 1000000, torn reads: 0
 PASS: no torn reads
 ```
 
-**Say:** "Every process that opens the device shares one kernel buffer, so this is shared memory. This test forks four processes. Two writers fill the whole buffer with A's or B's, over and over. Two readers check that every read is all one letter. Each process opens the device once and then loops as fast as it can. A mix of letters is a torn read: the reader caught the buffer halfway through a write. With the mutex on, only one process can be inside the buffer at a time, and there are zero torn reads out of 400,000."
+**Say:** "Every process that opens the device shares one kernel buffer, so this is shared memory. This test forks four processes. Two writers fill the whole buffer with A's or B's, over and over. Two readers check that every read is all one letter. Each process opens the device once and then loops as fast as it can. A mix of letters is a torn read: the reader caught the buffer halfway through a write. With the mutex on, only one process can be inside the buffer at a time, and there are zero torn reads out of a million."
 
 **Why a mutex and not a spinlock (if asked):** "copy_from_user can sleep if the user page isn't in memory, and you can't sleep while holding a spinlock. A mutex lets the waiting process sleep."
 
@@ -177,7 +177,7 @@ PASS: no torn reads
 
 ```
 mychardev: module loaded, /dev/mychardev created (buffer 1024 bytes, lock OFF)
-reads checked: 400000, torn reads: <some number>
+reads checked: 1000000, torn reads: <some number>
 FAIL: readers saw partly-written data (is the lock off?)
 ```
 
