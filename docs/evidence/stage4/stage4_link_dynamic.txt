@@ -1,12 +1,11 @@
 
-$ readelf -l user/test_driver | grep -A1 INTERP
-  INTERP         0x0000000000000374 0x0000000000000374 0x0000000000000374
-                 0x000000000000001c 0x000000000000001c  R      0x1
+$ readelf -l user/test_driver | grep 'program interpreter'
+      [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
 
 $ ldd user/test_driver
-	linux-vdso.so.1 (0x00007e444af29000)
-	libc.so.6 => /usr/lib/x86_64-linux-gnu/libc.so.6 (0x00007e444ac00000)
-	/lib64/ld-linux-x86-64.so.2 (0x00007e444af2b000)
+	linux-vdso.so.1 (0x00007490f9532000)
+	libc.so.6 => /usr/lib/x86_64-linux-gnu/libc.so.6 (0x00007490f9200000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007490f9534000)
 
 $ ldd user/test_driver_static
 	not a dynamic executable
@@ -19,4 +18,9 @@ $ nm -D --undefined-only user/test_driver | grep -wE 'open|pread|pwrite|read|wri
                  U read@GLIBC_2.2.5
                  U write@GLIBC_2.2.5
 
-$ nm user/test_driver_static | grep -wE 'T (open|pread64|pwrite64|fork)' | head
+$ nm user/test_driver_static | grep -wE '[TW] (open|open64|pread64|pwrite64|fork)'
+0000000000421080 W fork
+0000000000421fd0 W open
+0000000000421fd0 W open64
+0000000000421670 W pread64
+0000000000421690 W pwrite64

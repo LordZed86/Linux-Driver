@@ -7,24 +7,12 @@ $ nm -u module/mychardev.ko | grep -wE 'memdup_user|mutex_lock_interruptible|mut
                  U mutex_lock_interruptible
                  U mutex_unlock
 
-$ readelf -r module/mychardev.ko | grep -E 'Relocation section|memdup_user|mutex_lock_interruptible|_copy_to_user' | head -n 20
-Relocation section '.rela__jump_table' at offset 0x32978 contains 3 entries:
-Relocation section '.rela__patchable_function_entries' at offset 0x329c0 contains 6 entries:
-Relocation section '.rela.text' at offset 0x32a50 contains 142 entries:
-0000000000fd  005800000004 R_X86_64_PLT32    0000000000000000 memdup_user - 4
-0000000002bd  006900000004 R_X86_64_PLT32    0000000000000000 _copy_to_user - 4
-Relocation section '.rela.data' at offset 0x337a0 contains 24 entries:
-Relocation section '.rela.rodata' at offset 0x339e0 contains 5 entries:
-Relocation section '.rela.exit.text' at offset 0x33a58 contains 12 entries:
-Relocation section '.rela.init.text' at offset 0x33b78 contains 44 entries:
-Relocation section '.rela__mcount_loc' at offset 0x33f98 contains 5 entries:
-Relocation section '.rela.exit.data' at offset 0x34010 contains 1 entry:
-Relocation section '.rela.init.data' at offset 0x34028 contains 1 entry:
-Relocation section '.rela__param' at offset 0x34040 contains 8 entries:
-Relocation section '.rela.debug_info' at offset 0x34100 contains 6397 entries:
-Relocation section '.rela.debug_loclists' at offset 0x598b8 contains 91 entries:
-Relocation section '.rela.debug_aranges' at offset 0x5a140 contains 7 entries:
-Relocation section '.rela.debug_rnglists' at offset 0x5a1e8 contains 31 entries:
-Relocation section '.rela.debug_line' at offset 0x5a4d0 contains 368 entries:
-Relocation section '.rela.debug_frame' at offset 0x5c750 contains 20 entries:
-Relocation section '.rela.return_sites' at offset 0x5c930 contains 7 entries:
+$ readelf -rW module/mychardev.ko | awk '/^Relocation section/ {sec = $3} /memdup_user|mutex_lock_interruptible|mutex_unlock|_copy_to_user/ {print sec, $1, $3, $5}'
+'.rela.text' 00000000000000fd R_X86_64_PLT32 memdup_user
+'.rela.text' 00000000000001a5 R_X86_64_PLT32 mutex_lock_interruptible
+'.rela.text' 00000000000001ca R_X86_64_PLT32 mutex_unlock
+'.rela.text' 00000000000002bd R_X86_64_PLT32 _copy_to_user
+'.rela.text' 0000000000000329 R_X86_64_PLT32 mutex_unlock
+'.rela.text' 0000000000000337 R_X86_64_PLT32 mutex_lock_interruptible
+'.rela.text' 000000000000039f R_X86_64_PLT32 mutex_unlock
+'.rela.text' 00000000000003f4 R_X86_64_PLT32 mutex_unlock
