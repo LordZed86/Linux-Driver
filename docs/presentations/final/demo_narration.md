@@ -4,7 +4,7 @@ Each step has a **short** version (one or two sentences, if you're tight on time
 
 Script: `demo.sh` in this folder. Run it from the repo root inside the VM. Steps 9–10 reload the module with `verbose=0`, so the log stays quiet during the race test.
 
-**Backup plan:** if the unlocked race (step 10) shows 0 torn reads live, say so and show the saved runs in `docs/evidence/stage4/stage4_test_race_lock0_run*.txt` (run 1 had 7,647 torn reads). Have a screen recording of a clean run ready in case the VM misbehaves on Zoom.
+**Backup plan:** if the unlocked race (step 10) shows 0 torn reads live, say so and show the saved runs: `docs/evidence/stage4/race_history/session1_lock0_run1.txt` has 7,647 torn reads, and `race_history/README.md` summarizes all 9 runs. Have a screen recording of a clean run ready in case the VM misbehaves on Zoom.
 
 ---
 
