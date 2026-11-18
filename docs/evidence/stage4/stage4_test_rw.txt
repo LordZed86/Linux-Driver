@@ -1,0 +1,7 @@
+$ sudo ./test_driver rw hello from user space
+write buffer is at user address 0x7fff1242077a (21 bytes)
+write() returned 21
+read buffer is at user address 0x7fff1241ed30
+read() returned 21: "hello from user space"
+PASS: data read back matches data written
+[exit status 0]

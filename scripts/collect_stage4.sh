@@ -77,10 +77,12 @@ run_test fault fault
 { echo '$ echo hello | sudo tee /dev/mychardev'; echo hello | sudo tee /dev/mychardev
   echo '$ sudo cat /dev/mychardev'; sudo cat /dev/mychardev; } 2>&1 | save shell_rw
 sudo strace -o "$OUT/strace.tmp" "$ROOT/user/test_driver" rw "strace demo" >/dev/null 2>&1
-grep -E '"/dev/mychardev"|^(read|write|close)\(3,' "$OUT/strace.tmp" | save strace_rw
+awk '/"\/dev\/mychardev"/{on=1} on && /"\/dev\/mychardev"|^(read|write)\(3, |^close\(3\)/' "$OUT/strace.tmp" | save strace_rw
 sudo strace -o "$OUT/strace.tmp" "$ROOT/user/test_driver" fault >/dev/null 2>&1
-grep -E '"/dev/mychardev"|^(write|close)\(3,' "$OUT/strace.tmp" | save strace_fault
+awk '/"\/dev\/mychardev"/{on=1} on && /"\/dev\/mychardev"|^(read|write)\(3, |^close\(3\)/' "$OUT/strace.tmp" | save strace_fault
 sudo rm -f "$OUT/strace.tmp"
+# (the filter starts at the first open of the device, so the C library's own
+#  startup reads on fd 3 are skipped)
 sudo rmmod mychardev
 sudo dmesg -t | grep mychardev | save dmesg
 

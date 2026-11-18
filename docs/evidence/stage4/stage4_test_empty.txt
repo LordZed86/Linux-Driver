@@ -1,0 +1,4 @@
+$ sudo ./test_driver empty
+read() on an empty buffer returned 0 (0 means end of file)
+PASS: empty buffer reads as end of file
+[exit status 0]

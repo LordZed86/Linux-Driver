@@ -3,7 +3,7 @@
 ![Language](https://img.shields.io/badge/language-C99-blue)
 ![Linux kernel module](https://img.shields.io/badge/Linux-kernel%20module-orange?logo=linux&logoColor=white)
 ![Platform](https://img.shields.io/badge/platform-Ubuntu%20x86--64-informational)
-![Status](https://img.shields.io/badge/status-in%20development-yellow)
+![Status](https://img.shields.io/badge/status-complete%20(stage%204)-brightgreen)
 ![License](https://img.shields.io/badge/license-GPL--2.0-blue)
 
 A loadable Linux kernel module that registers a **virtual character device**, plus a user-space C program that talks to it through system calls. The project explores how user programs reach the kernel, how data crosses the user/kernel boundary safely, and what a compiled kernel module looks like at the object-file and assembly level.
@@ -14,19 +14,19 @@ Built for CS 370 — Computer Systems and Architecture.
 
 ## What it does
 
-**Working and tested (stage 3, midterm):**
+**Stage 3 (midterm), working and tested:**
 
 - Builds as a loadable kernel module (`mychardev.ko`) against the running kernel's headers
 - Registers a virtual character device (`/dev/mychardev`) when the module loads, and removes it on unload
 - Implements `open`, `read`, `write`, and `close` (release) handlers that log each operation, including the calling process's pid and name, to the kernel log
 - Tested by loading it in a QEMU/KVM virtual machine and driving it with `echo`, `tee`, and `cat`
 
-**Stage 4 (code written, testing in progress):**
+**Stage 4 (final), working and tested:**
 
 - Stores up to 1024 bytes in a fixed-size kernel buffer shared by every process that opens the device
 - Moves data between user space and kernel space with `copy_from_user` and `copy_to_user`
 - Protects the buffer with a mutex, so concurrent readers and writers cannot corrupt it or see half-written data
-- Handles edge cases: an oversized write is shortened and then fails with `ENOSPC`, and a bad user pointer returns `EFAULT` instead of crashing the kernel
+- Handles edge cases: an oversized write is shortened and then fails with `ENOSPC`, and a bad user pointer returns `EFAULT` instead of crashing the kernel; a failed write leaves the stored data unchanged
 - User-space test program writes a string, reads it back, prints buffer addresses, and runs the edge-case and concurrency tests
 - Two optional load parameters for testing: `use_lock=0` turns the mutex off, and `verbose=0` silences the per-operation log lines
 
@@ -42,11 +42,12 @@ Built for CS 370 — Computer Systems and Architecture.
 - [x] Stage 1 analysis: build output, `modinfo`, `nm`, `readelf`, `objdump` (`docs/evidence/`)
 - [x] Character device with `open`/`release`/`read`/`write` logging (stage 3), built on kernel 7.0 and loaded in the VM
 - [x] Stage 3 analysis saved (`docs/evidence/stage3/`)
-- [ ] Kernel buffer with `copy_to_user` / `copy_from_user` (stage 4): code written, testing in progress
-- [ ] Mutex around the buffer (added after midterm feedback): code written, testing in progress
-- [ ] User-space test program that writes, reads back, and runs edge-case and race tests: code written, testing in progress
-- [ ] Edge-case testing (empty buffer, oversized write, bad pointer)
-- [ ] `strace` and lldb evidence
+- [x] Kernel buffer with `copy_to_user` / `copy_from_user` (stage 4)
+- [x] Mutex around the buffer (added after midterm feedback), shown to prevent torn reads
+- [x] User-space test program that writes, reads back, and runs edge-case and race tests
+- [x] Edge-case testing (empty buffer, oversized write, bad pointer, module not loaded)
+- [x] `strace` and lldb evidence (`docs/evidence/stage4/`)
+- [ ] Stretch goals: `ioctl` command, open counter
 
 ---
 
@@ -88,7 +89,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 | User vs. kernel space          | Separate address spaces; `copy_to_user` / `copy_from_user` check user pointers and return `EFAULT` on a bad one                      |
 | Concurrency and shared memory  | Several processes share one kernel buffer; a mutex keeps one process inside it at a time, so a read never sees a half-written buffer |
 | Memory                         | Fixed-size buffer with bounds checks: short writes, then `ENOSPC` when full                                                          |
-| The stack                      | Planned: stack frames in the test program with lldb                                                                                  |
+| The stack                      | lldb shows `cmd_rw`'s frame (`rsp`, `rbp`) with the 1025-byte `rbuf` inside it, and argument registers at `open`/`write`/`read` |
 
 *Note: `mychardev_init` shows up as `init_module` in `objdump` output, because both names refer to the same function.*
 
@@ -197,14 +198,14 @@ sudo ./test_driver empty   # run right after loading: read returns 0 (end of fil
 sudo ./test_driver rw      # write a string, reopen, read it back
 sudo ./test_driver big     # 2000 bytes into a 1024-byte buffer: short write, then ENOSPC
 sudo ./test_driver fault   # bad pointer: the driver returns EFAULT
-sudo ./test_driver race    # 2 writers and 2 readers; counts torn reads (optional: race 10000)
+sudo ./test_driver race    # 2 writers and 2 readers; counts torn reads (optional: race 500000)
 ```
 
 **Run everything at once:** from the repo root inside the VM, `./scripts/collect_stage4.sh` builds both programs, runs every test mode, runs `race` three times with the lock on and three times with it off, and saves all output (tests, `dmesg`, `strace`, `objdump`, `nm`, `readelf`) to `docs/evidence/stage4/`.
 
 The device node is owned by root (`crw-------`), so the program needs `sudo`.
 
-**Mutex demo:** load with `sudo insmod mychardev.ko verbose=0` and run `race`; there should be 0 torn reads. Then unload, reload with `verbose=0 use_lock=0`, and run it again. Torn reads may appear, because readers can catch the buffer halfway through a write. This needs more than one CPU core, so it may not show up on every run.
+**Mutex demo:** load with `sudo insmod mychardev.ko verbose=0` and run `race`; there should be 0 torn reads. Then unload, reload with `verbose=0 use_lock=0`, and run it again. Torn reads should appear, because readers can catch the buffer halfway through a write. How many varies a lot from run to run (7,647, 1, and 3 in the saved runs), and it needs more than one CPU core; use a larger count such as `race 500000` to make it reliable.
 
 **5. Unload the module:**
 
@@ -241,7 +242,7 @@ lldb ./test_driver
 
 ## Testing
 
-There is no automated test framework; testing is done by running the module and checking results manually. Results below are from the VM running Ubuntu 26.04.1 (kernel 7.0.0-38-generic). Rows marked Pass are stage 3 results; rows marked Pending are stage 4 and will be filled in after testing.
+There is no automated test framework; testing is done by running the module and checking results manually. Results below are from the VM running Ubuntu 26.04.1 (kernel 7.0.0-38-generic). The first seven rows are stage 3 (midterm); the rest are stage 4, run with `scripts/collect_stage4.sh` on a 2-vCPU VM. Saved output is in `docs/evidence/stage4/`.
 
 | Test                                          | Expected result                               | Result                                     |
 | --------------------------------------------- | --------------------------------------------- | ------------------------------------------ |
@@ -252,13 +253,15 @@ There is no automated test framework; testing is done by running the module and 
 | Write                                         | Write handler receives the bytes              | Pass: 6 bytes ("hello" plus newline)       |
 | Read                                          | Read handler is called, returns 0 bytes       | Pass: `cat` requested 65536 bytes, got EOF |
 | Unload the module                             | `module unloaded` is logged                   | Pass                                       |
-| Write, then read back                         | Data read matches data written                | Pending (`test_driver rw`)                 |
-| Read with nothing stored                      | Returns 0 (end of file)                       | Pending (`test_driver empty`)              |
-| Write larger than the buffer                  | Short write of 1024 bytes, then `ENOSPC`      | Pending (`test_driver big`)                |
-| Bad user pointer                              | `EFAULT`, no kernel crash                     | Pending (`test_driver fault`)              |
-| Concurrent readers and writers, lock on       | 0 torn reads                                  | Pending (`test_driver race`)               |
-| Concurrent readers and writers, `use_lock=0`  | Torn reads may appear                         | Pending                                    |
-| Open the device when the module is not loaded | `open` fails with "No such file or directory" | Not yet                                    |
+| Write, then read back                         | Data read matches data written                | Pass: 21 bytes written and read back       |
+| Read with nothing stored                      | Returns 0 (end of file)                       | Pass: `read` returned 0                    |
+| Write larger than the buffer                  | Short write of 1024 bytes, then `ENOSPC`      | Pass: 1024, then errno 28                  |
+| Bad user pointer                              | `EFAULT`, no kernel crash                     | Pass: errno 14, kernel kept running        |
+| Failed write keeps stored data                | Data written before the bad write survives    | Pass: `keep-me` read back                  |
+| Concurrent readers and writers, lock on       | 0 torn reads                                  | Pass: 0 of 1,200,000 reads (3 runs)        |
+| Concurrent readers and writers, `use_lock=0`  | Torn reads appear (expected failure)          | Shown: 7,647, 1, and 3 torn reads per run  |
+| Open the device when the module is not loaded | `open` fails with "No such file or directory" | Pass                                       |
+| `strace` of `rw` and `fault`                  | Calls reach the device with right results     | Pass: `write` = 11, `read` = 11, `EFAULT`  |
 
 ---
 

@@ -93,7 +93,7 @@ hello
 ## Step 5: Test program round trip
 
 ```
-write buffer is at user address 0x5c65...  (21 bytes)
+write buffer is at user address 0x7fff...  (21 bytes)
 write() returned 21
 read buffer is at user address 0x7fff...
 read() returned 21: "hello from user space"
@@ -102,7 +102,7 @@ PASS: data read back matches data written
 
 **Short:** "My own C program does the same thing as tee and cat, but checks the result itself and prints PASS."
 
-**Full (user vs. kernel space):** "Look at the two addresses. The read buffer, 0x7fff-something, is on my program's stack. The write buffer, 0x5c-something, is the string constant compiled into the program. Both are user-space addresses, and they change every run because of address randomization. The kernel buffer is at 0xffffffffc09a..., in kernel space. The two sides can't see each other directly. My driver never dereferences a user pointer; it calls copy_from_user and copy_to_user, which check that the address really belongs to the calling process before copying."
+**Full (user vs. kernel space):** "Look at the addresses: both start with 0x7fff. The write buffer is my command-line argument, which the system stores at the top of the program's stack, and the read buffer is a local array on the stack. Those are user-space addresses, and they change every run because of address randomization. The kernel buffer is at 0xffffffffc09a-something, in kernel space. The two sides can't see each other directly. My driver never dereferences a user pointer; it calls copy_from_user and copy_to_user, which check that the address really belongs to the calling process before copying."
 
 ---
 

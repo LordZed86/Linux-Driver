@@ -1,0 +1,4 @@
+$ echo hello | sudo tee /dev/mychardev
+hello
+$ sudo cat /dev/mychardev
+hello

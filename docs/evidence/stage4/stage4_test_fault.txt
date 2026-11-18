@@ -1,0 +1,4 @@
+$ sudo ./test_driver fault
+write from address 0x1 returned -1, errno = 14 (Bad address)
+PASS: kernel rejected the bad pointer instead of crashing
+[exit status 0]

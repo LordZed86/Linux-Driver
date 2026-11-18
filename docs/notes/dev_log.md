@@ -121,3 +121,21 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - `write` now uses `memdup_user`, which allocates a temporary kernel buffer, copies into it, and returns `-EFAULT` on a bad pointer. Only a successful copy is moved into `kbuf`, under the lock. A failed write leaves the stored data unchanged.
   - Side effect: `copy_from_user` now runs before the lock is taken, so the lock is held for a plain `memcpy`. The mutex is still needed because `read` calls `copy_to_user`, which can sleep, while holding it.
 - **Next:** Build and run `collect_stage4.sh` in the VM. Add a check that a failed write doesn't change the stored data (`rw`, then `fault`, then read back).
+
+### 2026-11-17 - Stage 4 tested in the VM
+
+- **What I did:**
+  - Cloned the repo into the VM (`~/driver-project`) and ran `collect_stage4.sh` and `collect_lldb.sh` on kernel 7.0.0-38-generic with 2 vCPUs.
+  - All functional tests passed: `empty`, `rw`, `big` (1024, then ENOSPC), `fault` (EFAULT), the new fault-keeps-data check, and opening the device after unload.
+  - Race test, lock on: 0 torn reads in 1,200,000 reads (3 runs). Lock off: 7,647, 1, and 3 torn reads.
+  - Collected lldb evidence (argument registers at `open`/`write`/`read`, `rax` return value, `cmd_rw` stack frame) and kernel addresses from `/proc/kallsyms` (`kbuf` at `0xffffffffc09a7060`).
+- **What happened (output, errors):**
+  - The first two race runs showed 0 torn reads even with the lock off (12,000, then 120,000 reads). The lock really was off (`/sys/module/mychardev/parameters/use_lock` = N), and a manual 500,000-iteration run showed 1,458 torn reads, so the race was real but rare.
+  - The script's redaction replaced the user name `dev` everywhere, which would have turned `/dev/mychardev` into `/<host-user>/mychardev` in the evidence.
+  - The strace filter kept a C library startup `read(3, "\177ELF…")` line and missed `close(3)` lines.
+- **What I learned / how I fixed it:**
+  - A race only shows up when the processes actually run at the same time. The original test opened and closed the device on every iteration, so most time went to open/close rather than the 1 KB copy. The children were also started one after another, so early ones finished before late ones began. Fixes: each process opens once and loops on `pread`/`pwrite`, all four wait on a pipe "starting gate" until the parent releases them together, and the default is 200,000 iterations.
+  - The number of torn reads varies by thousands between runs because it depends on how the two vCPUs schedule the four processes. That's exactly why the lock is needed: a test that passes once proves nothing about a race.
+  - Redaction now only replaces `user@`; the strace filter starts at the first open of `/dev/mychardev`.
+  - lldb disables address randomization, so its addresses (`0x5555…`, `0x7fff…`) are fixed; outside the debugger they change every run. Command-line arguments live at the top of the stack, string constants in the program's read-only data.
+- **Next:** Screenshots for the report and slide 6, then fill in the final report and build the slides.

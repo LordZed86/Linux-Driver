@@ -1,0 +1,5 @@
+$ sudo ./test_driver race 200000
+2 writers, 2 readers, 200000 iterations each
+reads checked: 400000, torn reads: 0
+PASS: no torn reads
+[exit status 0]
