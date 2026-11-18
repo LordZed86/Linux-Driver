@@ -41,7 +41,7 @@ Built for CS 370 — Computer Systems and Architecture.
 - [x] Hello-world kernel module (stage 1)
 - [x] Stage 1 analysis: build output, `modinfo`, `nm`, `readelf`, `objdump` (`docs/evidence/`)
 - [x] Character device with `open`/`release`/`read`/`write` logging (stage 3), built on kernel 7.0 and loaded in the VM
-- [x] Stage 3 analysis saved (`docs/evidence/stage3_*`)
+- [x] Stage 3 analysis saved (`docs/evidence/stage3/`)
 - [ ] Kernel buffer with `copy_to_user` / `copy_from_user` (stage 4): code written, testing in progress
 - [ ] Mutex around the buffer (added after midterm feedback): code written, testing in progress
 - [ ] User-space test program that writes, reads back, and runs edge-case and race tests: code written, testing in progress
@@ -108,26 +108,41 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 
 ```plaintext
 .
-├── module/
-│   ├── mychardev.c            # Kernel module: registers device, implements file operations
-│   └── Makefile               # Builds the module with the kernel's build system
-├── user/
-│   └── test_driver.c          # User-space test program (write/read back, edge cases, race test)
-├── scripts/
-│   ├── collect_stage4.sh      # Runs all stage 4 tests in the VM and saves evidence
-│   ├── collect_lldb.sh        # lldb registers/stack evidence and kernel vs. user addresses
-│   └── package_submission.sh  # Builds the submission ZIP from the last commit
+├── module/                          # Kernel module (build with make)
+│   ├── mychardev.c                  #   Registers /dev/mychardev; buffer, mutex, file operations
+│   └── Makefile                     #   Builds against the running kernel's headers (kbuild)
+├── user/                            # User-space test program
+│   └── test_driver.c                #   Modes: rw, empty, big, fault, race
+├── scripts/                         # Run inside the VM, from the repo root
+│   ├── collect_stage4.sh            #   Builds, runs every test, saves evidence
+│   ├── collect_lldb.sh              #   lldb registers/stack and kernel vs. user addresses
+│   └── package_submission.sh        #   Builds the submission ZIP from the last commit
 ├── docs/
-│   ├── screenshots/           # Terminal captures used in the report
-│   ├── evidence/              # Saved readelf / nm / objdump / dmesg output
-│   ├── notes/                 # Dev log
-│   ├── proposal.md
-│   ├── setup_guide.md
-│   └── midterm_report.pdf
+│   ├── proposal.md                  # Original project proposal
+│   ├── setup_guide.md               # Host and VM setup
+│   ├── reports/
+│   │   ├── midterm_report.pdf       #   Midterm report as submitted
+│   │   └── final_report_paste_guide.md  # Plan for updating the midterm report into the final
+│   ├── presentations/
+│   │   ├── code_walkthrough.md      #   Line-by-line notes on the module and test program
+│   │   ├── midterm/                 #   Midterm demo script, narration, talking points
+│   │   └── final/                   #   Final demo script, narration, slide plan
+│   ├── evidence/                    # Saved tool output (build, nm, readelf, objdump, dmesg, strace)
+│   │   ├── stage1/
+│   │   ├── stage3/
+│   │   └── stage4/                  #   Written by the collect scripts
+│   ├── screenshots/                 # Cropped terminal captures used in the reports
+│   │   ├── stage3/
+│   │   └── stage4/
+│   └── notes/
+│       ├── dev_log.md               #   Dated record of decisions, bugs, and fixes
+│       └── finalization_checklist.md  # Remaining work and the final deliverables plan
 ├── LICENSE
 ├── .gitignore
 └── README.md
 ```
+
+Build output (`*.ko`, `*.o`, `Module.symvers`, `user/test_driver`) is gitignored, and so is a local `private/` folder that holds course files and unredacted screenshots.
 
 ---
 
@@ -259,13 +274,16 @@ There is no automated test framework; testing is done by running the module and 
 
 ## Documentation
 
-| Document                                  | Description                                             |
-| ----------------------------------------- | ------------------------------------------------------- |
-| [Project Proposal](docs/proposal.md)      | Original proposal submitted for CS 370                  |
-| [Midterm Report](docs/midterm_report.pdf) | Progress report with technical evidence                 |
-| [Setup Guide](docs/setup_guide.md)        | How the development environment and test VM are set up  |
-| [Dev Log](docs/notes/dev_log.md)          | Chronological record of decisions, bugs, and fixes      |
-| [Evidence](docs/evidence/)                | Saved tool output (`readelf`, `objdump`, `nm`, `dmesg`) |
+| Document                                                           | Description                                              |
+| ------------------------------------------------------------------ | -------------------------------------------------------- |
+| [Project Proposal](docs/proposal.md)                               | Original proposal submitted for CS 370                   |
+| [Midterm Report](docs/reports/midterm_report.pdf)                  | Progress report with technical evidence                  |
+| [Setup Guide](docs/setup_guide.md)                                 | How the development environment and test VM are set up   |
+| [Code Walkthrough](docs/presentations/code_walkthrough.md)         | Explanation of the module and test program               |
+| [Final Demo](docs/presentations/final/demo_narration.md)           | Demo script steps and what each one shows                |
+| [Dev Log](docs/notes/dev_log.md)                                   | Chronological record of decisions, bugs, and fixes       |
+| [Finalization Checklist](docs/notes/finalization_checklist.md)     | Remaining work and final deliverables                    |
+| [Evidence](docs/evidence/)                                         | Saved tool output (`readelf`, `objdump`, `nm`, `dmesg`)  |
 
 ---
 

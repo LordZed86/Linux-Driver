@@ -29,8 +29,8 @@ user-data
 .env
 private
 
-# Course materials and local copies (kept on disk, not published)
-docs/Final Project Guidelines.pdf
+# Local-only files: course materials, raw screenshots, anything private
+# (the "private" rule above covers private/)
 docs/notes/*.pdf
 
 # Raw terminal captures show VM user, hostname, and IP; commit cropped copies instead

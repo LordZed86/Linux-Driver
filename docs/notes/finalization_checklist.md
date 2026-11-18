@@ -102,7 +102,7 @@ Making a repo public publishes its **entire history**, not just the current file
 - [ ] **Midterm:** in-class demo prepared and rehearsed
 - [ ] Stretch features (`ioctl`, open counter) only if the core is finished (the mutex is now core scope)
 
-### Final project (see `docs/Final Project Guidelines.pdf`)
+### Final project (guidelines PDF: `private/final_project_guidelines.pdf`, not in Git)
 
 Guidelines: submission due **Tue Dec 1**, Zoom presentations Dec 1 / 3 / 8. My slot: **Mon Nov 30** (confirm). Target: everything done by **Wed Nov 25**, so Thanksgiving is buffer.
 
@@ -134,7 +134,7 @@ Submit **exactly two files**: one ZIP (source + supporting files) and one PDF (t
 - [ ] 7 Challenges and solutions: midterm list + stage 4 (errno bug, race test design, mutex vs. spinlock, anything from the VM run)
 - [ ] 8 Conclusion and future scope: ioctl, open counter, per-open buffers, kernel debugging in QEMU
 - [ ] 9 References: LKMPG, kernel docs (`copy_to_user`, `mutex`, `cdev`), man pages, course materials
-- [ ] Export as one PDF (`docs/final_report.pdf` locally; it's excluded from the ZIP)
+- [ ] Export as one PDF (`docs/reports/final_report.pdf`; the packaging script leaves it out of the ZIP)
 
 **Phase 4: slides (Nov 22–24)**: exactly 8 content slides plus a title slide and a thank-you slide
 
@@ -146,7 +146,7 @@ Submit **exactly two files**: one ZIP (source + supporting files) and one PDF (t
 **Phase 5: package and rehearse (Nov 24–29)**
 
 - [ ] `make clean`, commit, then `./scripts/package_submission.sh`; unzip it somewhere and confirm the README instructions build it
-- [ ] Two full timed run-throughs (12–15 min) over Zoom screen share, using `final_demo/demo2.sh`
+- [ ] Two full timed run-throughs (12–15 min) over Zoom screen share, using `docs/presentations/final/demo.sh`
 - [ ] Screen recording of a clean demo run as a backup
 - [ ] Night before: VM boots, module builds, `sudo -v` works, terminal font large, `export PS1='$ '`
 - [ ] Upload ZIP + PDF to Canvas (by Dec 1, ideally the same day as the presentation)
