@@ -10,7 +10,7 @@
  *   fault  pass a bad pointer to write(); the driver should answer EFAULT
  *   race [iterations]
  *          2 writers and 2 readers hammer the buffer; count torn reads
- *          (default 20000 iterations per process)
+ *          (default 200000 iterations per process)
  */
 #define _POSIX_C_SOURCE 200809L
 
@@ -176,9 +176,24 @@ static int cmd_fault(void)
 /* ---- race: concurrent writers and readers ----------------------------- */
 #define WRITERS 2
 #define READERS 2
-#define DEFAULT_ITER 20000
+#define DEFAULT_ITER 200000
 
 static int iter = DEFAULT_ITER;
+static int gate_fd = -1; /* read end of the starting-gate pipe */
+
+/*
+ * Block until the parent has forked every child and closes the gate's write
+ * end; read() then returns 0 in all children at once. Without the gate, the
+ * first children can finish before the last ones start, so readers and
+ * writers rarely run at the same time.
+ */
+static void wait_for_start(void)
+{
+    char c;
+
+    while (read(gate_fd, &c, 1) > 0)
+        ;
+}
 
 struct result
 {
@@ -200,6 +215,7 @@ static void writer_proc(int id)
     if (fd < 0)
         _exit(1);
     memset(fill, 'A' + id, sizeof fill);
+    wait_for_start();
     for (int i = 0; i < iter; i++)
         if (pwrite(fd, fill, sizeof fill, 0) != BUF_SIZE)
             _exit(1);
@@ -216,6 +232,7 @@ static void reader_proc(int wfd)
 
     if (fd < 0)
         _exit(1);
+    wait_for_start();
     for (int i = 0; i < iter; i++)
     {
         ssize_t n = pread(fd, buf, sizeof buf, 0);
@@ -245,7 +262,7 @@ static int cmd_race(void)
 {
     char seed[BUF_SIZE];
     struct result r, total = {0, 0};
-    int pfd[2];
+    int pfd[2], gate[2];
     int fd, status, failed = 0;
 
     /* Start from a full, uniform buffer so every read should be 1024 bytes. */
@@ -264,11 +281,12 @@ static int cmd_race(void)
     }
     close(fd);
 
-    if (pipe(pfd) < 0)
+    if (pipe(pfd) < 0 || pipe(gate) < 0)
     {
         perror("pipe");
         return 1;
     }
+    gate_fd = gate[0];
     for (int i = 0; i < WRITERS + READERS; i++)
     {
         pid_t pid = fork();
@@ -281,6 +299,7 @@ static int cmd_race(void)
         if (pid == 0)
         {
             close(pfd[0]);
+            close(gate[1]); /* only the parent holds the gate open */
             if (i < WRITERS)
                 writer_proc(i);
             else
@@ -288,6 +307,8 @@ static int cmd_race(void)
         }
     }
     close(pfd[1]);
+    close(gate[0]);
+    close(gate[1]); /* open the gate: every child starts now */
 
     while (read(pfd[0], &r, sizeof r) == (ssize_t)sizeof r)
     {
