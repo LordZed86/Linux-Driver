@@ -138,7 +138,7 @@ The demo runs while slide 6 is up, so the slide count stays at 8. Before present
 
 **Transition line:** "Let me show you it running. I'll switch to the VM."
 
-Run `docs/notes/presentation/final_demo/demo2.sh` and use `demo2_narration.md` for what to say. If time is short, run only these steps (about 3:30):
+Run `docs/presentations/final/demo.sh` and use `demo_narration.md` for what to say. If time is short, run only these steps (about 3:30):
 
 | Step | Shows | Keep or cut |
 | --- | --- | --- |

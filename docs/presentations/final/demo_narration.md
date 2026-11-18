@@ -2,7 +2,7 @@
 
 Each step has a **short** version (one or two sentences, if you're tight on time) and a **full** version (use it where it ties to a CS 370 concept). Pick the full version for steps 2, 5, 7, 8, and 9–10, and keep the others short. Total demo target: about 5 minutes (it is part of the 12–15 minute slot, so rehearse it with the slides).
 
-Script: `demo2.sh` in this folder. Run it from the repo root inside the VM. Steps 9–10 reload the module with `verbose=0`, so the log stays quiet during the race test.
+Script: `demo.sh` in this folder. Run it from the repo root inside the VM. Steps 9–10 reload the module with `verbose=0`, so the log stays quiet during the race test.
 
 **Backup plan:** if the unlocked race (step 10) shows 0 torn reads live, say so and show the saved runs in `docs/evidence/stage4/stage4_test_race_lock0_run*.txt`. Have a screen recording of a clean run ready in case the VM misbehaves on Zoom.
 
@@ -206,4 +206,4 @@ Cut these first: step 4 (the shell round trip, since step 5 shows the same thing
 
 ## Practice tip
 
-Run `demo2.sh` with this file open and narrate out loud with a timer. Practice the whole 12–15 minutes at least twice, slides and demo together, over Zoom screen share if you can, so the font size and window layout are tested too.
+Run `demo.sh` with this file open and narrate out loud with a timer. Practice the whole 12–15 minutes at least twice, slides and demo together, over Zoom screen share if you can, so the font size and window layout are tested too.

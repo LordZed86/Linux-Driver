@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # CS 370 FINAL demo (stage 4 build). Run INSIDE the VM, from anywhere in the repo:
-#   ./docs/notes/presentation/final_demo/demo2.sh
+#   ./docs/presentations/final/demo.sh
 # Press Enter to run each step. Ctrl+C to stop.
 # Before sharing your screen: export PS1='$ '  and make the terminal font large.
-# Narration for each step: demo2_narration.md (same folder).
+# Narration for each step: demo_narration.md (same folder).
 
-ROOT=$(cd "$(dirname "$0")/../../../.." && pwd) || exit 1
+ROOT=$(cd "$(dirname "$0")/../../.." && pwd) || exit 1
 cd "$ROOT" || exit 1
 RACE_ITER=${RACE_ITER:-5000}
 

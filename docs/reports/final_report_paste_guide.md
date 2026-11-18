@@ -282,4 +282,4 @@ The midterm had no references section. Paste this list, then remove anything you
 - [ ] No screenshot shows a username, hostname, or IP address.
 - [ ] The instructor's name is spelled the same everywhere (the proposal has "Pavalli", the midterm report "Pallavi").
 - [ ] AI assistance is acknowledged as the course policy requires.
-- [ ] Export: File → Export To → PDF, Image Quality: Best. Save as `docs/final_report.pdf` (the packaging script leaves it out of the ZIP; commit it to GitHub next to midterm\_report.pdf if you like), then upload it alongside the ZIP.
+- [ ] Export: File → Export To → PDF, Image Quality: Best. Save as `docs/reports/final_report.pdf` (the packaging script leaves it out of the ZIP; commit it to GitHub next to midterm\_report.pdf if you like), then upload it alongside the ZIP.
