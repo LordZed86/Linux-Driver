@@ -19,7 +19,7 @@ OUT=$ROOT/docs/evidence/stage4
 mkdir -p "$OUT"
 
 redact() {
-  sed -e "s#$HOME#<home>#g" -e "s#\b$(hostname)\b#<host-name>#g" -e "s#\b$USER\b#<host-user>#g"
+  sed -e "s#$HOME#<home>#g" -e "s#\b$(hostname)\b#<host-name>#g" -e "s#\b$USER@#<host-user>@#g"
 }
 save() { redact > "$OUT/stage4_$1.txt"; echo "  saved stage4_$1.txt"; }
 

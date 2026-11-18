@@ -15,12 +15,12 @@ set -u
 cd "$(dirname "$0")/.." || exit 1
 ROOT=$PWD
 OUT=$ROOT/docs/evidence/stage4
-RACE_ITER=${RACE_ITER:-2000}
+RACE_ITER=${RACE_ITER:-20000}
 RACE_RUNS=${RACE_RUNS:-3}
 mkdir -p "$OUT"
 
 redact() {  # hide user name, host name, and home path
-  sed -e "s#$HOME#<home>#g" -e "s#\b$(hostname)\b#<host-name>#g" -e "s#\b$USER\b#<host-user>#g"
+  sed -e "s#$HOME#<home>#g" -e "s#\b$(hostname)\b#<host-name>#g" -e "s#\b$USER@#<host-user>@#g"
 }
 
 save() {  # save <name>: stdin -> docs/evidence/stage4/stage4_<name>.txt
@@ -87,6 +87,8 @@ sudo dmesg -t | grep mychardev | save dmesg
 echo "== race test, use_lock=1 then use_lock=0 ($RACE_RUNS runs x $RACE_ITER iterations)"
 for lock in 1 0; do
   sudo insmod module/mychardev.ko verbose=0 use_lock=$lock
+  { echo '$ cat /sys/module/mychardev/parameters/use_lock'
+    cat /sys/module/mychardev/parameters/use_lock; } | save "race_lock${lock}_param"
   for i in $(seq 1 "$RACE_RUNS"); do run_test "race_lock${lock}_run$i" race "$RACE_ITER"; done
   sudo rmmod mychardev
 done
