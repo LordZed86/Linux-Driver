@@ -1,0 +1,5 @@
+$ sudo ./test_driver race 200000
+2 writers, 2 readers, 200000 iterations each
+reads checked: 400000, torn reads: 7647
+FAIL: readers saw partly-written data (is the lock off?)
+[exit status 1]

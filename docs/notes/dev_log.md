@@ -139,3 +139,22 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - Redaction now only replaces `user@`; the strace filter starts at the first open of `/dev/mychardev`.
   - lldb disables address randomization, so its addresses (`0x5555…`, `0x7fff…`) are fixed; outside the debugger they change every run. Command-line arguments live at the top of the stack, string constants in the program's read-only data.
 - **Next:** Screenshots for the report and slide 6, then fill in the final report and build the slides.
+
+### 2026-11-17 - Second-half course topics: caching and linking evidence
+
+- **What I did:**
+  - Mapped the second half of the course (weeks 5–8: memory and pointers, caching, OS and processes, linking and loading) to the project and added rows to the README concepts table.
+  - Week 6: the race test now records where each torn read changes letter (offset mod 64) and where each reader's buffer sits in its cache line; the script saves `kbuf`'s address with each race run.
+  - Week 8: new `scripts/collect_linking.sh` compares the module (REL), the dynamic test program (DYN/PIE), and a static build (EXEC): `file`, `readelf -h`, `ldd`, file sizes, the loader in `strace`, and the module's relocations.
+  - Kept the earlier race runs in `docs/evidence/stage4/race_history/`, since each run overwrites the race files.
+- **What happened (output, errors):**
+  - The first VM pull failed: the evidence files were now tracked in Git, and the VM had untracked copies of them. The script then ran the old code. Fixed by deleting the VM's copies before pulling; from now on, `git checkout -- docs/evidence && git pull` in the VM.
+  - At `-O2`, gcc warned that `fault` writes from address 1 (intentional). A `volatile` variable now hides the address from the optimizer.
+  - Unlocked race across three sessions: 7,647, 1, 3 / 3, 0, 1,223 / 1, 0, 3 torn reads. Locked: 0 in all 9 runs.
+  - Tear offsets: every tear from the small runs split at offset 32 mod 64, exactly `kbuf`'s cache-line boundaries (`kbuf` is at `…7060`, 32 bytes into a line). The 1,223-tear run split at offset 8 instead; reader buffers are 16-byte aligned (they started at byte 0, 32, or 48 of a line), so 8 isn't a reader cache-line boundary either. Unexplained.
+  - Static build: 885,504 bytes vs. 21,448 dynamic. `strace` shows `ld.so` opening `libc.so.6` and reading its `\177ELF` header (the line that showed up in the strace evidence earlier); the static build opens nothing.
+- **What I learned / how I fixed it:**
+  - Tears don't happen at random byte positions: the copies move data in fixed-size chunks, and most splits line up with the destination buffer's cache lines.
+  - `kbuf_len` (`…7040`) and `kbuf` (`…7060`) share one 64-byte cache line.
+  - The first version of the linking script's filters missed the interpreter line, the static symbols, and relocations outside `.rela.text`; fixed.
+- **Next:** Rerun `collect_linking.sh` for the fixed filters, then screenshots, the report, and the slides.

@@ -85,15 +85,16 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 | Number systems and bitwise ops | `MAJOR()`/`MINOR()` compile to `shr $0x14` and `and $0xfffff`; `crw-------` is octal 600; hex addresses in `nm`/`objdump`            |
 | Assembly and control flow      | `if (ret < 0)` checks compile to `test` plus a conditional jump (`jns`), with a cleanup path on failure                              |
 | Compilation and object files   | `make` builds a relocatable ELF `.ko`; `readelf` shows type `REL`, and `.rela.*` sections hold the relocations the loader patches    |
-| Processes and scheduling       | `dmesg` names the pid and command; `race` forks 4 processes and checks each exit status with `wait`; a process waiting on the mutex sleeps (blocked state); how the scheduler places 4 processes on 2 vCPUs makes torn reads vary from 7,647 to 1 per run |
+| Processes and scheduling       | `dmesg` names the pid and command; `race` forks 4 processes and checks each exit status with `wait`; a process waiting on the mutex sleeps (blocked state); how the scheduler places 4 processes on 2 vCPUs makes torn reads vary from 0 to 7,647 per run |
 | User vs. kernel space          | Separate address spaces; `copy_to_user` / `copy_from_user` check user pointers and return `EFAULT` on a bad one                      |
 | Concurrency and shared memory  | Several processes share one kernel buffer; a mutex keeps one process inside it at a time, so a read never sees a half-written buffer |
 | Memory                         | Fixed-size buffer with bounds checks: short writes, then `ENOSPC` when full                                                          |
 | The stack                      | lldb shows `cmd_rw`'s frame (`rsp`, `rbp`) with the 1025-byte `rbuf` inside it, and argument registers at `open`/`write`/`read` |
+| Memory hierarchy and caching   | Torn reads split at fixed offsets, not at random: with `kbuf` 32 bytes into a 64-byte cache line, most small runs split exactly at `kbuf`'s cache-line boundaries (offset 32 mod 64); one large run split at offset 8, which is unexplained (`race_history/README.md`) |
 | Pointers, stack, and heap      | `rbuf` is a stack array; `memdup_user` allocates kernel heap memory, freed with `kfree`; `kbuf` is a static array in `.bss`; a bad pointer gets `EFAULT` instead of a crash |
 | Virtual memory and paging      | User addresses (`0x7fff…`) and kernel addresses (`0xffffffffc0…`) are separate virtual ranges; `copy_to_user` can page-fault and sleep, so the lock is a mutex; ASLR moves user addresses every run |
 | System calls and mode switches | Each `read`/`write` traps from user mode into kernel mode and back (`strace` shows the calls; `dmesg` shows the kernel side) |
-| Linking and loading            | `mychardev.ko` is relocatable (`REL`) and the kernel links it at `insmod`; `test_driver` is dynamically linked (`DYN`) and `ld.so` loads libc at start; a static build needs neither (`scripts/collect_linking.sh`) |
+| Linking and loading            | `mychardev.ko` is relocatable (`REL`) and the kernel links it at `insmod`; `test_driver` is dynamically linked (`DYN`) and `ld.so` loads libc at start; a static build needs neither: 21 KB dynamic vs. 865 KB static (`scripts/collect_linking.sh`) |
 
 *Note: `mychardev_init` shows up as `init_module` in `objdump` output, because both names refer to the same function.*
 
@@ -210,7 +211,7 @@ sudo ./test_driver race    # 2 writers and 2 readers; counts torn reads (optiona
 
 The device node is owned by root (`crw-------`), so the program needs `sudo`.
 
-**Mutex demo:** load with `sudo insmod mychardev.ko verbose=0` and run `race`; there should be 0 torn reads. Then unload, reload with `verbose=0 use_lock=0`, and run it again. Torn reads should appear, because readers can catch the buffer halfway through a write. How many varies a lot from run to run (7,647, 1, and 3 in the saved runs), and it needs more than one CPU core; use a larger count such as `race 500000` to make it reliable.
+**Mutex demo:** load with `sudo insmod mychardev.ko verbose=0` and run `race`; there should be 0 torn reads. Then unload, reload with `verbose=0 use_lock=0`, and run it again. Torn reads should appear, because readers can catch the buffer halfway through a write. How many varies a lot from run to run (0 to 7,647 across 9 saved runs; see `docs/evidence/stage4/race_history/`), and it needs more than one CPU core; use a larger count such as `race 500000` to make it reliable.
 
 **5. Unload the module:**
 
@@ -263,8 +264,8 @@ There is no automated test framework; testing is done by running the module and 
 | Write larger than the buffer                  | Short write of 1024 bytes, then `ENOSPC`      | Pass: 1024, then errno 28                  |
 | Bad user pointer                              | `EFAULT`, no kernel crash                     | Pass: errno 14, kernel kept running        |
 | Failed write keeps stored data                | Data written before the bad write survives    | Pass: `keep-me` read back                  |
-| Concurrent readers and writers, lock on       | 0 torn reads                                  | Pass: 0 of 1,200,000 reads (3 runs)        |
-| Concurrent readers and writers, `use_lock=0`  | Torn reads appear (expected failure)          | Shown: 7,647, 1, and 3 torn reads per run  |
+| Concurrent readers and writers, lock on       | 0 torn reads                                  | Pass: 0 of 3,600,000 reads (9 runs)        |
+| Concurrent readers and writers, `use_lock=0`  | Torn reads appear (expected failure)          | Shown in 7 of 9 runs: 0 to 7,647 per run   |
 | Open the device when the module is not loaded | `open` fails with "No such file or directory" | Pass                                       |
 | `strace` of `rw` and `fault`                  | Calls reach the device with right results     | Pass: `write` = 11, `read` = 11, `EFAULT`  |
 

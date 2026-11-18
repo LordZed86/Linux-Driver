@@ -1,45 +1,45 @@
 mychardev: allocated major 239, minor 0
 mychardev: module loaded, /dev/mychardev created (buffer 1024 bytes, lock on)
-mychardev: open by pid 2854 (test_driver)
+mychardev: open by pid 6729 (test_driver)
 mychardev: read of 1024 bytes by test_driver: no more data (returning 0)
-mychardev: release by pid 2854 (test_driver)
-mychardev: open by pid 2862 (test_driver)
+mychardev: release by pid 6729 (test_driver)
+mychardev: open by pid 6737 (test_driver)
 mychardev: write of 21 bytes by test_driver: stored 21
-mychardev: release by pid 2862 (test_driver)
-mychardev: open by pid 2862 (test_driver)
+mychardev: release by pid 6737 (test_driver)
+mychardev: open by pid 6737 (test_driver)
 mychardev: read of 1024 bytes by test_driver: returned 21
-mychardev: release by pid 2862 (test_driver)
-mychardev: open by pid 2870 (test_driver)
+mychardev: release by pid 6737 (test_driver)
+mychardev: open by pid 6745 (test_driver)
 mychardev: write of 2000 bytes by test_driver: stored 1024
 mychardev: write of 976 bytes by test_driver: buffer full, returning -ENOSPC
-mychardev: release by pid 2870 (test_driver)
-mychardev: open by pid 2878 (test_driver)
+mychardev: release by pid 6745 (test_driver)
+mychardev: open by pid 6753 (test_driver)
 mychardev: write by test_driver: bad user address, returning -14
-mychardev: release by pid 2878 (test_driver)
-mychardev: open by pid 2887 (tee)
+mychardev: release by pid 6753 (test_driver)
+mychardev: open by pid 6762 (tee)
 mychardev: write of 8 bytes by tee: stored 8
-mychardev: release by pid 2887 (tee)
-mychardev: open by pid 2891 (test_driver)
+mychardev: release by pid 6762 (tee)
+mychardev: open by pid 6766 (test_driver)
 mychardev: write by test_driver: bad user address, returning -14
-mychardev: release by pid 2891 (test_driver)
-mychardev: open by pid 2895 (cat)
+mychardev: release by pid 6766 (test_driver)
+mychardev: open by pid 6770 (cat)
 mychardev: read of 65536 bytes by cat: returned 8
 mychardev: read of 65536 bytes by cat: no more data (returning 0)
-mychardev: release by pid 2895 (cat)
-mychardev: open by pid 2904 (tee)
+mychardev: release by pid 6770 (cat)
+mychardev: open by pid 6779 (tee)
 mychardev: write of 6 bytes by tee: stored 6
-mychardev: release by pid 2904 (tee)
-mychardev: open by pid 2908 (cat)
+mychardev: release by pid 6779 (tee)
+mychardev: open by pid 6783 (cat)
 mychardev: read of 65536 bytes by cat: returned 6
 mychardev: read of 65536 bytes by cat: no more data (returning 0)
-mychardev: release by pid 2908 (cat)
-mychardev: open by pid 2914 (test_driver)
+mychardev: release by pid 6783 (cat)
+mychardev: open by pid 6789 (test_driver)
 mychardev: write of 11 bytes by test_driver: stored 11
-mychardev: release by pid 2914 (test_driver)
-mychardev: open by pid 2914 (test_driver)
+mychardev: release by pid 6789 (test_driver)
+mychardev: open by pid 6789 (test_driver)
 mychardev: read of 1024 bytes by test_driver: returned 11
-mychardev: release by pid 2914 (test_driver)
-mychardev: open by pid 2924 (test_driver)
+mychardev: release by pid 6789 (test_driver)
+mychardev: open by pid 6799 (test_driver)
 mychardev: write by test_driver: bad user address, returning -14
-mychardev: release by pid 2924 (test_driver)
+mychardev: release by pid 6799 (test_driver)
 mychardev: module unloaded

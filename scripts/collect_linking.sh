@@ -37,11 +37,11 @@ echo "== ELF type: relocatable vs. dynamic vs. static"
 } | save types
 
 echo "== dynamic linking: what test_driver needs at run time"
-{ show "readelf -l user/test_driver | grep -A1 INTERP"
+{ show "readelf -l user/test_driver | grep 'program interpreter'"
   show "ldd user/test_driver"
   show "ldd user/test_driver_static"
   show "nm -D --undefined-only user/test_driver | grep -wE 'open|pread|pwrite|read|write|fork|printf'"
-  show "nm user/test_driver_static | grep -wE 'T (open|pread64|pwrite64|fork)' | head"
+  show "nm user/test_driver_static | grep -wE '[TW] (open|open64|pread64|pwrite64|fork)'"
 } | save dynamic
 
 echo "== the loader at work (no device needed: an unknown mode just prints usage)"
@@ -53,7 +53,7 @@ echo "== the loader at work (no device needed: an unknown mode just prints usage
 
 echo "== relocations in the module, filled in by the kernel at insmod"
 { show "nm -u module/mychardev.ko | grep -wE 'memdup_user|mutex_lock_interruptible|mutex_unlock|_copy_to_user|kfree|_printk'"
-  show "readelf -r module/mychardev.ko | grep -E 'Relocation section|memdup_user|mutex_lock_interruptible|_copy_to_user' | head -n 20"
+  show "readelf -rW module/mychardev.ko | awk '/^Relocation section/ {sec = \$3} /memdup_user|mutex_lock_interruptible|mutex_unlock|_copy_to_user/ {print sec, \$1, \$3, \$5}'"
 } | save relocations
 
 rm -f user/test_driver_static
