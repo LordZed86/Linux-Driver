@@ -156,5 +156,6 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
 - **What I learned / how I fixed it:**
   - Tears don't happen at random byte positions: the copies move data in fixed-size chunks, and most splits line up with the destination buffer's cache lines.
   - `kbuf_len` (`…7040`) and `kbuf` (`…7060`) share one 64-byte cache line.
-  - The first version of the linking script's filters missed the interpreter line, the static symbols, and relocations outside `.rela.text`; fixed.
+  - The first version of the linking script's filters missed the interpreter line and the static build's symbols, and cut the relocation list off after 20 lines, before the mutex entries; fixed. The module has 8 relocated calls in `.rela.text`: `memdup_user`, `_copy_to_user`, `mutex_lock_interruptible` twice (read and write), and `mutex_unlock` four times (each exit path that holds the lock).
+  - In the static build, `open`, `fork`, `pread64`, and `pwrite64` are weak symbols (`W`): glibc's default definitions, which a strong definition of the same name would override.
 - **Next:** Rerun `collect_linking.sh` for the fixed filters, then screenshots, the report, and the slides.
