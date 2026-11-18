@@ -195,10 +195,14 @@ static void wait_for_start(void)
         ;
 }
 
+#define LINE 64 /* x86-64 cache line size in bytes */
+
 struct result
 {
     int checked;
     int torn;
+    int switches_by_offset[LINE]; /* where the letter changes, offset % 64 */
+    int multi;                    /* torn reads with more than one change */
 };
 
 /*
@@ -223,19 +227,25 @@ static void writer_proc(int id)
     _exit(0);
 }
 
-/* A "torn" read contains a mix of letters, or is not a full buffer. */
+/*
+ * A "torn" read contains a mix of letters, or is not a full buffer.
+ * For each torn read, record every offset where the letter changes (mod 64),
+ * to see whether the writer's copy lands in whole cache lines.
+ */
 static void reader_proc(int wfd)
 {
-    struct result r = {0, 0};
+    struct result r;
     char buf[BUF_SIZE];
     int fd = open(DEV, O_RDONLY);
 
+    memset(&r, 0, sizeof r);
     if (fd < 0)
         _exit(1);
     wait_for_start();
     for (int i = 0; i < iter; i++)
     {
         ssize_t n = pread(fd, buf, sizeof buf, 0);
+        int changes = 0;
 
         r.checked++;
         if (n != BUF_SIZE)
@@ -245,12 +255,16 @@ static void reader_proc(int wfd)
         }
         for (int j = 1; j < BUF_SIZE; j++)
         {
-            if (buf[j] != buf[0])
+            if (buf[j] != buf[j - 1])
             {
-                r.torn++;
-                break;
+                changes++;
+                r.switches_by_offset[j % LINE]++;
             }
         }
+        if (changes > 0)
+            r.torn++;
+        if (changes > 1)
+            r.multi++;
     }
     close(fd);
     if (write(wfd, &r, sizeof r) != (ssize_t)sizeof r)
@@ -258,14 +272,41 @@ static void reader_proc(int wfd)
     _exit(0);
 }
 
+/* Print the most common offsets (mod 64) where a torn read changes letter. */
+static void print_switch_offsets(const struct result *t)
+{
+    int count[LINE], all = 0;
+
+    memcpy(count, t->switches_by_offset, sizeof count);
+    for (int k = 0; k < LINE; k++)
+        all += count[k];
+    printf("letter changes: %d (torn reads with more than one change: %d)\n",
+           all, t->multi);
+    printf("most common change offsets (offset %% %d):", LINE);
+    for (int shown = 0; shown < 5; shown++)
+    {
+        int best = 0;
+
+        for (int k = 1; k < LINE; k++)
+            if (count[k] > count[best])
+                best = k;
+        if (count[best] == 0)
+            break;
+        printf(" %d (%d)", best, count[best]);
+        count[best] = 0;
+    }
+    putchar('\n');
+}
+
 static int cmd_race(void)
 {
     char seed[BUF_SIZE];
-    struct result r, total = {0, 0};
+    struct result r, total;
     int pfd[2], gate[2];
     int fd, status, failed = 0;
 
     /* Start from a full, uniform buffer so every read should be 1024 bytes. */
+    memset(&total, 0, sizeof total);
     memset(seed, 'A', sizeof seed);
     fd = open(DEV, O_WRONLY);
     if (fd < 0)
@@ -314,6 +355,9 @@ static int cmd_race(void)
     {
         total.checked += r.checked;
         total.torn += r.torn;
+        total.multi += r.multi;
+        for (int k = 0; k < LINE; k++)
+            total.switches_by_offset[k] += r.switches_by_offset[k];
     }
     /* A child that hit an error exits with status 1; don't hide that. */
     while (wait(&status) > 0)
@@ -323,6 +367,8 @@ static int cmd_race(void)
     printf("%d writers, %d readers, %d iterations each\n",
            WRITERS, READERS, iter);
     printf("reads checked: %d, torn reads: %d\n", total.checked, total.torn);
+    if (total.torn > 0)
+        print_switch_offsets(&total);
     if (failed)
     {
         printf("FAIL: %d child process(es) hit an error\n", failed);

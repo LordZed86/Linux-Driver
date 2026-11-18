@@ -12,6 +12,7 @@ modules.order
 
 # User-space build output
 user/test_driver
+user/test_driver_static
 *.out
 a.out
 

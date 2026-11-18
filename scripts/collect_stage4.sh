@@ -90,7 +90,9 @@ echo "== race test, use_lock=1 then use_lock=0 ($RACE_RUNS runs x $RACE_ITER ite
 for lock in 1 0; do
   sudo insmod module/mychardev.ko verbose=0 use_lock=$lock
   { echo '$ cat /sys/module/mychardev/parameters/use_lock'
-    cat /sys/module/mychardev/parameters/use_lock; } | save "race_lock${lock}_param"
+    cat /sys/module/mychardev/parameters/use_lock
+    echo '$ sudo grep -w kbuf /proc/kallsyms   # where the buffer sits in its cache line'
+    sudo grep -w kbuf /proc/kallsyms; } | save "race_lock${lock}_param"
   for i in $(seq 1 "$RACE_RUNS"); do run_test "race_lock${lock}_run$i" race "$RACE_ITER"; done
   sudo rmmod mychardev
 done
@@ -100,6 +102,6 @@ echo "== open with the module unloaded"
 
 echo
 echo "== summary"
-grep -E '^(PASS|FAIL)|torn reads:' "$OUT"/stage4_test_*.txt
+grep -E '^(PASS|FAIL)|torn reads:|change offsets' "$OUT"/stage4_test_*.txt
 echo
 echo "Evidence is in docs/evidence/stage4/. Read each file before committing."
