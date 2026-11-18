@@ -16,7 +16,9 @@
  *   - A write past the end of the buffer is shortened; once the buffer is
  *     full, further writes fail with -ENOSPC.
  *   - A bad user pointer makes copy_to_user / copy_from_user fail, and the
- *     handler returns -EFAULT instead of crashing the kernel.
+ *     handler returns -EFAULT instead of crashing the kernel. A failed write
+ *     leaves the stored data unchanged (it is copied to a temporary buffer
+ *     first).
  *
  * Module parameters (both read-only after load):
  *   use_lock=0  turn the mutex off, to show what it protects against.
@@ -32,6 +34,8 @@
 #include <linux/module.h>
 #include <linux/mutex.h>
 #include <linux/sched.h>
+#include <linux/slab.h>
+#include <linux/string.h>
 #include <linux/uaccess.h>
 
 #define DEVICE_NAME "mychardev"
@@ -41,7 +45,7 @@
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Kellen Jones");
 MODULE_DESCRIPTION("Virtual character device driver for CS 370");
-MODULE_VERSION("0.3");
+MODULE_VERSION("0.4");
 
 static bool use_lock = true;
 module_param(use_lock, bool, 0444);
@@ -70,8 +74,9 @@ static DEFINE_MUTEX(buf_lock); /* only one process in the buffer at a time */
 /*
  * Take and release the buffer lock. mutex_lock_interruptible() lets a
  * process that is waiting for the lock be woken by a signal (Ctrl-C).
- * A mutex (not a spinlock) is correct here because copy_to_user and
- * copy_from_user can sleep while they handle a page fault.
+ * A mutex (not a spinlock) is correct here because read calls copy_to_user
+ * while holding the lock, and copy_to_user can sleep while it handles a
+ * page fault. (write does its copy_from_user before taking the lock.)
  */
 static int buf_lock_acquire(void)
 {
@@ -140,39 +145,52 @@ static ssize_t mychardev_read(struct file *filp, char __user *ubuf,
 
 /*
  * Called for write(fd, buf, count). 'ubuf' is a user-space pointer, so
- * copy_from_user() does the copy into the kernel buffer.
+ * memdup_user() (which uses copy_from_user()) copies it into a temporary
+ * kernel buffer; only a successful copy is moved into kbuf, under the lock.
  */
 static ssize_t mychardev_write(struct file *filp, const char __user *ubuf,
 							   size_t count, loff_t *ppos)
 {
 	size_t pos = *ppos;
 	size_t n;
+	char *tmp;
 
 	if (count == 0)
 		return 0;
 
-	if (buf_lock_acquire())
-		return -ERESTARTSYS;
-
 	if (pos >= BUF_SIZE)
 	{
-		buf_lock_release();
 		LOG("write of %zu bytes by %s: buffer full, returning -ENOSPC\n",
 			count, current->comm);
 		return -ENOSPC;
 	}
 
 	n = min(count, (size_t)(BUF_SIZE - pos)); /* shorten if too big */
-	if (copy_from_user(kbuf + pos, ubuf, n))
+
+	/*
+	 * Copy into a temporary kernel buffer first. If the user pointer is bad,
+	 * copy_from_user zero-fills the part it could not copy; doing that
+	 * straight into kbuf would wipe stored data on a failed write.
+	 * memdup_user allocates, copies, and returns -EFAULT on a bad pointer.
+	 */
+	tmp = memdup_user(ubuf, n);
+	if (IS_ERR(tmp))
 	{
-		buf_lock_release();
-		LOG("write by %s: bad user address, returning -EFAULT\n",
-			current->comm);
-		return -EFAULT;
+		LOG("write by %s: bad user address, returning %ld\n",
+			current->comm, PTR_ERR(tmp));
+		return PTR_ERR(tmp);
 	}
+
+	if (buf_lock_acquire())
+	{
+		kfree(tmp);
+		return -ERESTARTSYS;
+	}
+	memcpy(kbuf + pos, tmp, n);
 	*ppos = pos + n;
 	kbuf_len = pos + n;
 	buf_lock_release();
+	kfree(tmp);
 
 	LOG("write of %zu bytes by %s: stored %zu\n", count, current->comm, n);
 	return n;

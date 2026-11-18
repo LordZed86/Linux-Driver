@@ -28,3 +28,14 @@ user-data
 *.key
 .env
 private
+
+# Course materials and local copies (kept on disk, not published)
+docs/Final Project Guidelines.pdf
+docs/notes/*.pdf
+
+# Raw terminal captures show VM user, hostname, and IP; commit cropped copies instead
+docs/screenshots/**/Screenshot From *
+
+# Submission and presentation files (Keynote .key files are already covered by *.key above)
+*.zip
+*.pptx

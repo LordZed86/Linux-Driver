@@ -100,9 +100,56 @@ Making a repo public publishes its **entire history**, not just the current file
 - [ ] **Midterm (Oct 21):** report PDF with the nine required sections, 3-5 pages, plus technical evidence and screenshots
 - [ ] **Midterm:** source code and `README.md` with compile and run instructions submitted on Canvas
 - [ ] **Midterm:** in-class demo prepared and rehearsed
-- [ ] **Final (Dec 3):** final report and demo integrating the second-half course concepts
-- [ ] **Final:** source code zip with a working README, submitted on Canvas
 - [ ] Stretch features (`ioctl`, open counter) only if the core is finished (the mutex is now core scope)
+
+### Final project (see `docs/Final Project Guidelines.pdf`)
+
+Guidelines: submission due **Tue Dec 1**, Zoom presentations Dec 1 / 3 / 8. My slot: **Mon Nov 30** (confirm). Target: everything done by **Wed Nov 25**, so Thanksgiving is buffer.
+
+Submit **exactly two files**: one ZIP (source + supporting files) and one PDF (the updated midterm report). Do not upload the slides.
+
+**Phase 1: make it work (Nov 18–19, in the VM)**
+
+- [ ] VM has 2+ vCPUs; take a VM snapshot first
+- [ ] Commit, then run `./scripts/collect_stage4.sh`; every mode prints PASS (race with `use_lock=0` is *expected* to FAIL)
+- [ ] Run `./scripts/collect_lldb.sh` (registers, stack frame, user vs. kernel addresses)
+- [ ] Read every file in `docs/evidence/stage4/` for usernames, hostnames, and IPs; then commit
+- [ ] Screenshots into `docs/screenshots/stage4/`: test_driver rw, big, fault, race lock on vs. off, dmesg, lldb registers
+- [ ] Fix anything that fails, re-run, log it in the dev log (it's material for "Challenges and Solutions")
+
+**Phase 2: docs (Nov 20–21)**
+
+- [ ] README: Status checklist, Testing table (fill in Pending rows), stage 4 screenshot, status badge
+- [ ] Dev log entry for the test run
+- [ ] Bump `MODULE_VERSION` to `1.0` once tests pass
+
+**Phase 3: report PDF (Nov 20–23)**: keep all midterm content, add final work, cover all nine sections
+
+- [ ] 1 Project introduction (title, problem, objectives, scope; note the Nov 3 mutex scope change)
+- [ ] 2 Requirements: functional (open/read/write/release, 1024 B buffer, ENOSPC, EFAULT, mutex) and non-functional (no kernel crash, VM-only loading, kernel 7.0, C99 test program)
+- [ ] 3 System design: architecture diagram (user program → syscall → VFS → file_operations → kbuf + mutex), memory design (user vs. kernel address space, 1024 B buffer, `kbuf_len`)
+- [ ] 4 Implementation: module walkthrough, test program modes, module parameters, concepts table
+- [ ] 5 Project output: stage 3 + stage 4 screenshots with captions
+- [ ] 6 Testing and results: full test table with real results, race lock on/off numbers, strace excerpt
+- [ ] 7 Challenges and solutions: midterm list + stage 4 (errno bug, race test design, mutex vs. spinlock, anything from the VM run)
+- [ ] 8 Conclusion and future scope: ioctl, open counter, per-open buffers, kernel debugging in QEMU
+- [ ] 9 References: LKMPG, kernel docs (`copy_to_user`, `mutex`, `cdev`), man pages, course materials
+- [ ] Export as one PDF (`docs/final_report.pdf` locally; it's excluded from the ZIP)
+
+**Phase 4: slides (Nov 22–24)**: exactly 8 content slides plus a title slide and a thank-you slide
+
+- [ ] 1 Intro, problem, objectives, solution · 2 Midterm progress and planned final scope
+- [ ] 3 Final overview and features · 4 Architecture and implementation · 5 How the major functions work
+- [ ] 6 Output screenshots and results · 7 Testing, challenges, solutions · 8 Conclusion and future scope
+- [ ] Decide where the live demo goes (after slide 5 or as part of slide 6)
+
+**Phase 5: package and rehearse (Nov 24–29)**
+
+- [ ] `make clean`, commit, then `./scripts/package_submission.sh`; unzip it somewhere and confirm the README instructions build it
+- [ ] Two full timed run-throughs (12–15 min) over Zoom screen share, using `final_demo/demo2.sh`
+- [ ] Screen recording of a clean demo run as a backup
+- [ ] Night before: VM boots, module builds, `sudo -v` works, terminal font large, `export PS1='$ '`
+- [ ] Upload ZIP + PDF to Canvas (by Dec 1, ideally the same day as the presentation)
 
 ---
 

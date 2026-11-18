@@ -114,7 +114,9 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 ├── user/
 │   └── test_driver.c          # User-space test program (write/read back, edge cases, race test)
 ├── scripts/
-│   └── collect_stage4.sh      # Runs all stage 4 tests in the VM and saves evidence
+│   ├── collect_stage4.sh      # Runs all stage 4 tests in the VM and saves evidence
+│   ├── collect_lldb.sh        # lldb registers/stack evidence and kernel vs. user addresses
+│   └── package_submission.sh  # Builds the submission ZIP from the last commit
 ├── docs/
 │   ├── screenshots/           # Terminal captures used in the report
 │   ├── evidence/              # Saved readelf / nm / objdump / dmesg output
