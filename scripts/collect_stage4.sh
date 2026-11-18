@@ -102,6 +102,6 @@ echo "== open with the module unloaded"
 
 echo
 echo "== summary"
-grep -E '^(PASS|FAIL)|torn reads:|change offsets' "$OUT"/stage4_test_*.txt
+grep -E '^(PASS|FAIL)|torn reads:|change offsets|reader buffers' "$OUT"/stage4_test_*.txt
 echo
 echo "Evidence is in docs/evidence/stage4/. Read each file before committing."
