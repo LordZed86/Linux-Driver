@@ -67,6 +67,13 @@ run_test empty empty
 run_test rw rw "hello from user space"
 run_test big big
 run_test fault fault
+{ echo '$ echo keep-me | sudo tee /dev/mychardev; sudo ./test_driver fault; sudo cat /dev/mychardev'
+  echo keep-me | sudo tee /dev/mychardev >/dev/null
+  sudo "$ROOT/user/test_driver" fault >/dev/null 2>&1
+  got=$(sudo cat /dev/mychardev)
+  echo "read back: $got"
+  if [ "$got" = keep-me ]; then echo "PASS: failed write left the stored data unchanged"
+  else echo "FAIL: failed write changed the stored data"; fi; } 2>&1 | save test_fault_keeps_data
 { echo '$ echo hello | sudo tee /dev/mychardev'; echo hello | sudo tee /dev/mychardev
   echo '$ sudo cat /dev/mychardev'; sudo cat /dev/mychardev; } 2>&1 | save shell_rw
 sudo strace -o "$OUT/strace.tmp" "$ROOT/user/test_driver" rw "strace demo" >/dev/null 2>&1

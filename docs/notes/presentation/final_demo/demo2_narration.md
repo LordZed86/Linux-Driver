@@ -1,6 +1,10 @@
 # Demo Narration (what to say at each step)
 
-Each step has a **short** version (one or two sentences, if you're tight on time) and a **full** version (use it where it ties to a CS 370 concept). Pick the full version for steps 1, 2, and 5, and keep the others short. Total demo target: about 3 minutes.
+Each step has a **short** version (one or two sentences, if you're tight on time) and a **full** version (use it where it ties to a CS 370 concept). Pick the full version for steps 2, 5, 7, 8, and 9–10, and keep the others short. Total demo target: about 5 minutes (it is part of the 12–15 minute slot, so rehearse it with the slides).
+
+Script: `demo2.sh` in this folder. Run it from the repo root inside the VM. Steps 9–10 reload the module with `verbose=0`, so the log stays quiet during the race test.
+
+**Backup plan:** if the unlocked race (step 10) shows 0 torn reads live, say so and show the saved runs in `docs/evidence/stage4/stage4_test_race_lock0_run*.txt`. Have a screen recording of a clean run ready in case the VM misbehaves on Zoom.
 
 ---
 
@@ -51,7 +55,18 @@ crw------- 1 root root 239, 0 ...
 
 ---
 
-## Step 3: Write to the device
+## Step 3: Read with nothing stored
+
+```
+read() on an empty buffer returned 0 (0 means end of file)
+PASS: empty buffer reads as end of file
+```
+
+**Say:** "Right after loading, the buffer is empty. Read returns zero, which is how Linux says end of file. That's the empty-buffer edge case from my proposal."
+
+---
+
+## Step 4a: Write to the device (shell)
 
 ```
 $ echo hello | sudo tee /dev/mychardev
@@ -62,67 +77,133 @@ hello
 
 ---
 
-## Step 4: Read from the device
+## Step 4b: Read back (shell)
 
 ```
 $ sudo cat /dev/mychardev
 hello
 ```
 
-**Say (stage 4):** "cat opens the device and calls read. This time my read handler finds the six bytes that step 3 stored in the kernel buffer and copies them back to cat with copy_to_user, so hello prints. A second read returns zero, which is end of file, and cat stops."
+**Say:** "cat opens the device and calls read. My read handler finds the six bytes that tee stored in the kernel buffer and copies them back with copy_to_user, so hello prints. cat calls read again, gets zero, which means end of file, and stops."
 
-**Stage 3 version (midterm):** nothing printed, because read returned zero and the data was discarded.
-
-**Log lines to expect in step 5 (stage 4):** `write of 6 bytes by tee: stored 6` and `read of 65536 bytes by cat: returned 6`, then `read of 65536 bytes by cat: no more data (returning 0)`.
+**Contrast with the midterm:** "At the midterm, this printed nothing, because read returned zero and write threw the data away. The buffer is the main thing I added."
 
 ---
 
-## Step 5: The kernel log
+## Step 5: Test program round trip
 
 ```
-mychardev: loading out-of-tree module taints kernel.
-mychardev: module verification failed: signature and/or required key missing - tainting kernel
+write buffer is at user address 0x7ffd...  (21 bytes)
+write() returned 21
+read buffer is at user address 0x7ffd...
+read() returned 21: "hello from user space"
+PASS: data read back matches data written
+```
+
+**Short:** "My own C program does the same thing as tee and cat, but checks the result itself and prints PASS."
+
+**Full (user vs. kernel space):** "Look at the addresses: 0x7ff-something. Those are user-space addresses on the stack of my program. The kernel buffer lives at an address starting with 0xffff, in kernel space. The two can't see each other directly. My driver never dereferences the user pointer. It calls copy_from_user and copy_to_user, which check that the address really belongs to the calling process before copying."
+
+---
+
+## Step 6: Edge case, oversized write
+
+```
+write of 2000 bytes returned 1024 (short write: buffer holds 1024)
+second write returned -1, errno = 28 (No space left on device)
+PASS: short write, then ENOSPC
+```
+
+**Say:** "I write 2000 bytes into a 1024-byte buffer. The driver doesn't overflow. It accepts what fits and returns 1024, a short write, which is allowed in Linux. The program tries to write the rest, and since the buffer is full, the driver returns ENOSPC, error 28. That bounds check is what keeps a user program from writing past the end of kernel memory."
+
+---
+
+## Step 7: Edge case, bad pointer
+
+```
+write from address 0x1 returned -1, errno = 14 (Bad address)
+PASS: kernel rejected the bad pointer instead of crashing
+```
+
+**Say:** "Now I pass the address 1, which is not valid memory. If my driver had just used memcpy on that pointer, it would crash in kernel mode, and that can take down the whole machine. copy_from_user catches the fault and my handler returns EFAULT, error 14. The program gets an error and the kernel keeps running."
+
+---
+
+## Step 8: The kernel log
+
+```
 mychardev: allocated major 239, minor 0
-mychardev: module loaded, /dev/mychardev created
-mychardev: open by pid 1758 (tee)
-mychardev: write of 6 bytes received
-mychardev: release by pid 1758 (tee)
-mychardev: open by pid 1762 (cat)
-mychardev: read of 65536 bytes requested
-mychardev: release by pid 1762 (cat)
+mychardev: module loaded, /dev/mychardev created (buffer 1024 bytes, lock on)
+mychardev: open by pid ... (test_driver)
+mychardev: read of 1024 bytes by test_driver: no more data (returning 0)
+mychardev: write of 6 bytes by tee: stored 6
+mychardev: read of 65536 bytes by cat: returned 6
+mychardev: read of 65536 bytes by cat: no more data (returning 0)
+mychardev: write of 2000 bytes by test_driver: stored 1024
+mychardev: write of 976 bytes by test_driver: buffer full, returning -ENOSPC
+mychardev: write by test_driver: bad user address, returning -EFAULT
+mychardev: release by pid ... (test_driver)
 ```
 
-**Setup (short):** "Kernel code can't print to the terminal, so my module writes to the kernel log with printk. dmesg reads that log. The dash-t flag drops the timestamps so it's easier to read."
+(The `tail -n 20` hides the earlier lines. Replace this block with the real output after the first rehearsal.)
 
-**Full, in order:**
-- **The first two lines (taint):** "The kernel notes that my module isn't part of the kernel and isn't signed, so it marks itself 'tainted'. It still works. It's a flag for debugging. A machine with Secure Boot would refuse to load it."
-- **allocated major 239, minor 0:** "My init function asked the kernel for a free device number, and this is what it got. It matches the node we saw with ls."
-- **module loaded:** "Init finished: the device is registered and the node exists."
-- **open by pid 1758 (tee):** "My open handler ran. The kernel keeps a record of the running process, and my handler reads its pid and command name from it. That's the OS process model: I can see exactly who is using my device."
-- **write of 6 bytes received:** "The write handler. Six bytes, matching hello plus the newline."
-- **release by pid 1758:** "Release runs when the file is closed, which happened when tee finished."
-- **open by pid 1762 (cat), read of 65536 bytes requested:** "A different process, cat, and a different handler. cat asks for 65,536 bytes, a 64 KB buffer. My handler returns zero."
-- **release by pid 1762:** "And cat closes it."
+**Setup (short):** "Kernel code can't print to the terminal, so my module writes to the kernel log with printk, and dmesg reads it."
+
+**Full:**
+- **pid and command name:** "Each handler reads the current process from the kernel. That's the process model: I can see exactly who used my device, tee, cat, or test_driver."
+- **65536 vs. 6:** "cat asked for 64 KB and got 6 bytes, because that's all that was stored. Then a second read returns zero and cat stops."
+- **stored 1024 / -ENOSPC / -EFAULT:** "These are the edge cases from steps 6 and 7, seen from the kernel side."
 
 **Big picture, one sentence:** "Every line here is a system call from a user program that crossed into the kernel and ran code I wrote."
 
 ---
 
-## Step 6: Unload it
+## Step 9: Mutex on
+
+```
+mychardev: module loaded, /dev/mychardev created (buffer 1024 bytes, lock on)
+2 writers, 2 readers, 5000 iterations each
+reads checked: 10000, torn reads: 0
+PASS: no torn reads
+```
+
+**Say:** "Every process that opens the device shares one kernel buffer, so this is shared memory. This test forks four processes. Two writers fill the whole buffer with A's or B's, over and over. Two readers check that every read is all one letter. A mix of letters is a torn read: the reader caught the buffer halfway through a write. With the mutex on, only one process can be inside the buffer at a time, and there are zero torn reads out of 10,000."
+
+**Why a mutex and not a spinlock (if asked):** "copy_from_user can sleep if the user page isn't in memory, and you can't sleep while holding a spinlock. A mutex lets the waiting process sleep."
+
+---
+
+## Step 10: Mutex off
+
+```
+mychardev: module loaded, /dev/mychardev created (buffer 1024 bytes, lock OFF)
+reads checked: 10000, torn reads: <some number>
+FAIL: readers saw partly-written data (is the lock off?)
+```
+
+**Say:** "Same test, same code, but I loaded the module with use_lock=0, which skips the mutex. Now readers catch the buffer mid-write and the test fails. That FAIL is the expected result here. It shows the race condition the mutex prevents. This was the change suggested at my midterm."
+
+**If it shows 0 torn reads:** "Races depend on timing, and this VM has only two CPUs, so it doesn't always show up live. Here are three runs I saved earlier," then open the `race_lock0` evidence files.
+
+---
+
+## Step 11: Unload, then try to use the device
 
 ```
 $ sudo rmmod mychardev
 mychardev: module unloaded
+$ sudo cat /dev/mychardev
+cat: /dev/mychardev: No such file or directory
 ```
 
-**Say:** "rmmod unloads it. The kernel runs my exit function, which tears down the device in reverse order of how init built it, and logs that it's gone."
+**Say:** "rmmod runs my exit function, which tears everything down in reverse order of init. The device node is gone, so opening it fails. That's the last edge case from my proposal: opening the device when the module isn't loaded."
 
 ---
 
 ## If you're short on time
 
-Cut these first: the `.module-common.o` explanation, the lsmod explanation, and the taint explanation (just say "expected for a self-built module"). Keep: the crw------- breakdown, the pid lines, and the one-sentence big picture.
+Cut these first: step 4 (the shell round trip, since step 5 shows the same thing), the lsmod explanation, and the taint explanation (just say "expected for a self-built module"). Keep: the user vs. kernel addresses (step 5), the bad pointer (step 7), and the mutex on/off (steps 9–10). Those are the core of the final project.
 
 ## Practice tip
 
-Run `./demo.sh` with this file open and narrate out loud with a timer. The crw------- and the log are where you'll want to slow down, because those are the parts that connect to the course.
+Run `demo2.sh` with this file open and narrate out loud with a timer. Practice the whole 12–15 minutes at least twice, slides and demo together, over Zoom screen share if you can, so the font size and window layout are tested too.

@@ -109,3 +109,15 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
 - **What happened (output, errors):** Not run yet; the test program compiles cleanly with `-std=c99 -Wall -Wextra -pedantic`.
 - **What I learned / how I fixed it:** `errno` is only meaningful immediately after the call that failed; any later library call may overwrite it.
 - **Next:** Run the script in the VM (with at least 2 vCPUs, so the unlocked race can show torn reads), review the evidence, fill in the README testing table, then start the final report. Final is due Dec 3.
+
+### 2026-11-17 - Final guidelines and a write-path bug
+
+- **What I did:**
+  - Read the final project guidelines: the submission is one ZIP plus one PDF (the updated midterm report with nine sections), due Dec 1. The talk is 12–15 minutes with exactly 8 content slides and a live demo.
+  - Rewrote the final demo script and narration for stage 4. Added `scripts/collect_lldb.sh` (registers, stack frame, user vs. kernel addresses) and `scripts/package_submission.sh` (builds the ZIP from the last commit).
+  - Fixed a bug in `mychardev_write` (version 0.4).
+- **What happened (output, errors):** Found on review, not yet seen in the VM. When `copy_from_user` fails, it zero-fills the bytes it could not copy. Because the write copied straight into `kbuf`, a failed write (the `fault` test passes address 1) overwrote the first 16 stored bytes with zeros while `kbuf_len` stayed the same. A later read would return the zeros.
+- **What I learned / how I fixed it:**
+  - `write` now uses `memdup_user`, which allocates a temporary kernel buffer, copies into it, and returns `-EFAULT` on a bad pointer. Only a successful copy is moved into `kbuf`, under the lock. A failed write leaves the stored data unchanged.
+  - Side effect: `copy_from_user` now runs before the lock is taken, so the lock is held for a plain `memcpy`. The mutex is still needed because `read` calls `copy_to_user`, which can sleep, while holding it.
+- **Next:** Build and run `collect_stage4.sh` in the VM. Add a check that a failed write doesn't change the stored data (`rw`, then `fault`, then read back).
