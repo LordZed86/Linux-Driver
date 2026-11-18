@@ -1,0 +1,3 @@
+kernel: 7.0.0-38-generic
+cpus:   2
+gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0

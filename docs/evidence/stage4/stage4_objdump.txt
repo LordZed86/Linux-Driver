@@ -1,0 +1,814 @@
+
+module/mychardev.ko:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <__pfx_mychardev_release>:
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+
+0000000000000010 <mychardev_release>:
+  10:	e8 00 00 00 00       	call   15 <mychardev_release+0x5>
+			11: R_X86_64_PLT32	__fentry__-0x4
+  15:	55                   	push   %rbp
+  16:	48 89 e5             	mov    %rsp,%rbp
+  19:	48 83 ec 08          	sub    $0x8,%rsp
+  1d:	0f b6 05 00 00 00 00 	movzbl 0x0(%rip),%eax        # 24 <mychardev_release+0x14>
+			20: R_X86_64_PC32	.data+0x19c
+  24:	3c 01                	cmp    $0x1,%al
+  26:	0f 87 00 00 00 00    	ja     2c <mychardev_release+0x1c>
+			28: R_X86_64_PC32	.text+0x3f6
+  2c:	a8 01                	test   $0x1,%al
+  2e:	0f 85 00 00 00 00    	jne    34 <mychardev_release+0x24>
+			30: R_X86_64_PC32	.text+0x411
+  34:	c9                   	leave
+  35:	31 c0                	xor    %eax,%eax
+  37:	31 d2                	xor    %edx,%edx
+  39:	31 f6                	xor    %esi,%esi
+  3b:	31 ff                	xor    %edi,%edi
+  3d:	e9 00 00 00 00       	jmp    42 <mychardev_release+0x32>
+			3e: R_X86_64_PLT32	__x86_return_thunk-0x4
+  42:	0f 1f 00             	nopl   (%rax)
+  45:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  4c:	00 00 00 00 
+
+0000000000000050 <__pfx_mychardev_open>:
+  50:	90                   	nop
+  51:	90                   	nop
+  52:	90                   	nop
+  53:	90                   	nop
+  54:	90                   	nop
+  55:	90                   	nop
+  56:	90                   	nop
+  57:	90                   	nop
+  58:	90                   	nop
+  59:	90                   	nop
+  5a:	90                   	nop
+  5b:	90                   	nop
+  5c:	90                   	nop
+  5d:	90                   	nop
+  5e:	90                   	nop
+  5f:	90                   	nop
+
+0000000000000060 <mychardev_open>:
+  60:	e8 00 00 00 00       	call   65 <mychardev_open+0x5>
+			61: R_X86_64_PLT32	__fentry__-0x4
+  65:	55                   	push   %rbp
+  66:	48 89 e5             	mov    %rsp,%rbp
+  69:	48 83 ec 08          	sub    $0x8,%rsp
+  6d:	0f b6 05 00 00 00 00 	movzbl 0x0(%rip),%eax        # 74 <mychardev_open+0x14>
+			70: R_X86_64_PC32	.data+0x19c
+  74:	3c 01                	cmp    $0x1,%al
+  76:	0f 87 00 00 00 00    	ja     7c <mychardev_open+0x1c>
+			78: R_X86_64_PC32	.text+0x437
+  7c:	a8 01                	test   $0x1,%al
+  7e:	0f 85 00 00 00 00    	jne    84 <mychardev_open+0x24>
+			80: R_X86_64_PC32	.text+0x452
+  84:	c9                   	leave
+  85:	31 c0                	xor    %eax,%eax
+  87:	31 d2                	xor    %edx,%edx
+  89:	31 f6                	xor    %esi,%esi
+  8b:	31 ff                	xor    %edi,%edi
+  8d:	e9 00 00 00 00       	jmp    92 <mychardev_open+0x32>
+			8e: R_X86_64_PLT32	__x86_return_thunk-0x4
+  92:	0f 1f 00             	nopl   (%rax)
+  95:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  9c:	00 00 00 00 
+
+00000000000000a0 <__pfx_mychardev_write>:
+  a0:	90                   	nop
+  a1:	90                   	nop
+  a2:	90                   	nop
+  a3:	90                   	nop
+  a4:	90                   	nop
+  a5:	90                   	nop
+  a6:	90                   	nop
+  a7:	90                   	nop
+  a8:	90                   	nop
+  a9:	90                   	nop
+  aa:	90                   	nop
+  ab:	90                   	nop
+  ac:	90                   	nop
+  ad:	90                   	nop
+  ae:	90                   	nop
+  af:	90                   	nop
+
+00000000000000b0 <mychardev_write>:
+  b0:	e8 00 00 00 00       	call   b5 <mychardev_write+0x5>
+			b1: R_X86_64_PLT32	__fentry__-0x4
+  b5:	55                   	push   %rbp
+  b6:	48 89 e5             	mov    %rsp,%rbp
+  b9:	41 57                	push   %r15
+  bb:	41 56                	push   %r14
+  bd:	41 55                	push   %r13
+  bf:	41 54                	push   %r12
+  c1:	53                   	push   %rbx
+  c2:	31 db                	xor    %ebx,%ebx
+  c4:	48 83 ec 08          	sub    $0x8,%rsp
+  c8:	48 85 d2             	test   %rdx,%rdx
+  cb:	0f 84 ae 00 00 00    	je     17f <mychardev_write+0xcf>
+  d1:	4c 8b 21             	mov    (%rcx),%r12
+  d4:	49 89 ce             	mov    %rcx,%r14
+  d7:	49 89 d5             	mov    %rdx,%r13
+  da:	48 89 f7             	mov    %rsi,%rdi
+  dd:	49 81 fc ff 03 00 00 	cmp    $0x3ff,%r12
+  e4:	0f 87 06 01 00 00    	ja     1f0 <mychardev_write+0x140>
+  ea:	bb 00 04 00 00       	mov    $0x400,%ebx
+  ef:	4c 29 e3             	sub    %r12,%rbx
+  f2:	48 39 d3             	cmp    %rdx,%rbx
+  f5:	48 0f 47 da          	cmova  %rdx,%rbx
+  f9:	48 89 de             	mov    %rbx,%rsi
+  fc:	e8 00 00 00 00       	call   101 <mychardev_write+0x51>
+			fd: R_X86_64_PLT32	memdup_user-0x4
+ 101:	49 89 c7             	mov    %rax,%r15
+ 104:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+ 10a:	0f 87 c0 00 00 00    	ja     1d0 <mychardev_write+0x120>
+ 110:	0f b6 05 00 00 00 00 	movzbl 0x0(%rip),%eax        # 117 <mychardev_write+0x67>
+			113: R_X86_64_PC32	.data+0x19d
+ 117:	3c 01                	cmp    $0x1,%al
+ 119:	0f 87 00 00 00 00    	ja     11f <mychardev_write+0x6f>
+			11b: R_X86_64_PC32	.text+0x4ea
+ 11f:	a8 01                	test   $0x1,%al
+ 121:	75 7a                	jne    19d <mychardev_write+0xed>
+ 123:	49 8d bc 24 00 00 00 	lea    0x0(%r12),%rdi
+ 12a:	00 
+			127: R_X86_64_32S	.bss+0x20
+ 12b:	4c 89 fe             	mov    %r15,%rsi
+ 12e:	49 01 dc             	add    %rbx,%r12
+ 131:	48 89 da             	mov    %rbx,%rdx
+ 134:	e8 00 00 00 00       	call   139 <mychardev_write+0x89>
+			135: R_X86_64_PLT32	memcpy-0x4
+ 139:	4d 89 26             	mov    %r12,(%r14)
+ 13c:	4c 89 25 00 00 00 00 	mov    %r12,0x0(%rip)        # 143 <mychardev_write+0x93>
+			13f: R_X86_64_PC32	.bss-0x4
+ 143:	44 0f b6 25 00 00 00 	movzbl 0x0(%rip),%r12d        # 14b <mychardev_write+0x9b>
+ 14a:	00 
+			147: R_X86_64_PC32	.data+0x19d
+ 14b:	41 80 fc 01          	cmp    $0x1,%r12b
+ 14f:	0f 87 00 00 00 00    	ja     155 <mychardev_write+0xa5>
+			151: R_X86_64_PC32	.text+0x478
+ 155:	41 83 e4 01          	and    $0x1,%r12d
+ 159:	75 67                	jne    1c2 <mychardev_write+0x112>
+ 15b:	4c 89 ff             	mov    %r15,%rdi
+ 15e:	e8 00 00 00 00       	call   163 <mychardev_write+0xb3>
+			15f: R_X86_64_PLT32	kfree-0x4
+ 163:	44 0f b6 25 00 00 00 	movzbl 0x0(%rip),%r12d        # 16b <mychardev_write+0xbb>
+ 16a:	00 
+			167: R_X86_64_PC32	.data+0x19c
+ 16b:	41 80 fc 01          	cmp    $0x1,%r12b
+ 16f:	0f 87 00 00 00 00    	ja     175 <mychardev_write+0xc5>
+			171: R_X86_64_PC32	.text+0x505
+ 175:	41 83 e4 01          	and    $0x1,%r12d
+ 179:	0f 85 00 00 00 00    	jne    17f <mychardev_write+0xcf>
+			17b: R_X86_64_PC32	.text+0x48d
+ 17f:	48 83 c4 08          	add    $0x8,%rsp
+ 183:	48 89 d8             	mov    %rbx,%rax
+ 186:	5b                   	pop    %rbx
+ 187:	41 5c                	pop    %r12
+ 189:	41 5d                	pop    %r13
+ 18b:	41 5e                	pop    %r14
+ 18d:	41 5f                	pop    %r15
+ 18f:	5d                   	pop    %rbp
+ 190:	31 d2                	xor    %edx,%edx
+ 192:	31 c9                	xor    %ecx,%ecx
+ 194:	31 f6                	xor    %esi,%esi
+ 196:	31 ff                	xor    %edi,%edi
+ 198:	e9 00 00 00 00       	jmp    19d <mychardev_write+0xed>
+			199: R_X86_64_PLT32	__x86_return_thunk-0x4
+ 19d:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			1a0: R_X86_64_32S	.data+0x180
+ 1a4:	e8 00 00 00 00       	call   1a9 <mychardev_write+0xf9>
+			1a5: R_X86_64_PLT32	mutex_lock_interruptible-0x4
+ 1a9:	85 c0                	test   %eax,%eax
+ 1ab:	0f 84 72 ff ff ff    	je     123 <mychardev_write+0x73>
+ 1b1:	4c 89 ff             	mov    %r15,%rdi
+ 1b4:	48 c7 c3 00 fe ff ff 	mov    $0xfffffffffffffe00,%rbx
+ 1bb:	e8 00 00 00 00       	call   1c0 <mychardev_write+0x110>
+			1bc: R_X86_64_PLT32	kfree-0x4
+ 1c0:	eb bd                	jmp    17f <mychardev_write+0xcf>
+ 1c2:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			1c5: R_X86_64_32S	.data+0x180
+ 1c9:	e8 00 00 00 00       	call   1ce <mychardev_write+0x11e>
+			1ca: R_X86_64_PLT32	mutex_unlock-0x4
+ 1ce:	eb 8b                	jmp    15b <mychardev_write+0xab>
+ 1d0:	44 0f b6 25 00 00 00 	movzbl 0x0(%rip),%r12d        # 1d8 <mychardev_write+0x128>
+ 1d7:	00 
+			1d4: R_X86_64_PC32	.data+0x19c
+ 1d8:	41 80 fc 01          	cmp    $0x1,%r12b
+ 1dc:	0f 87 00 00 00 00    	ja     1e2 <mychardev_write+0x132>
+			1de: R_X86_64_PC32	.text+0x53d
+ 1e2:	41 83 e4 01          	and    $0x1,%r12d
+ 1e6:	4c 89 fb             	mov    %r15,%rbx
+ 1e9:	74 94                	je     17f <mychardev_write+0xcf>
+ 1eb:	e9 00 00 00 00       	jmp    1f0 <mychardev_write+0x140>
+			1ec: R_X86_64_PC32	.text+0x51a
+ 1f0:	0f b6 1d 00 00 00 00 	movzbl 0x0(%rip),%ebx        # 1f7 <mychardev_write+0x147>
+			1f3: R_X86_64_PC32	.data+0x19c
+ 1f7:	80 fb 01             	cmp    $0x1,%bl
+ 1fa:	0f 87 00 00 00 00    	ja     200 <mychardev_write+0x150>
+			1fc: R_X86_64_PC32	.text+0x4d6
+ 200:	83 e3 01             	and    $0x1,%ebx
+ 203:	0f 85 00 00 00 00    	jne    209 <mychardev_write+0x159>
+			205: R_X86_64_PC32	.text+0x4b3
+ 209:	48 c7 c3 e4 ff ff ff 	mov    $0xffffffffffffffe4,%rbx
+ 210:	e9 6a ff ff ff       	jmp    17f <mychardev_write+0xcf>
+ 215:	66 66 2e 0f 1f 84 00 	data16 cs nopw 0x0(%rax,%rax,1)
+ 21c:	00 00 00 00 
+
+0000000000000220 <__pfx_mychardev_read>:
+ 220:	90                   	nop
+ 221:	90                   	nop
+ 222:	90                   	nop
+ 223:	90                   	nop
+ 224:	90                   	nop
+ 225:	90                   	nop
+ 226:	90                   	nop
+ 227:	90                   	nop
+ 228:	90                   	nop
+ 229:	90                   	nop
+ 22a:	90                   	nop
+ 22b:	90                   	nop
+ 22c:	90                   	nop
+ 22d:	90                   	nop
+ 22e:	90                   	nop
+ 22f:	90                   	nop
+
+0000000000000230 <mychardev_read>:
+ 230:	e8 00 00 00 00       	call   235 <mychardev_read+0x5>
+			231: R_X86_64_PLT32	__fentry__-0x4
+ 235:	55                   	push   %rbp
+ 236:	48 89 e5             	mov    %rsp,%rbp
+ 239:	41 57                	push   %r15
+ 23b:	49 89 f7             	mov    %rsi,%r15
+ 23e:	41 56                	push   %r14
+ 240:	41 55                	push   %r13
+ 242:	49 89 d5             	mov    %rdx,%r13
+ 245:	41 54                	push   %r12
+ 247:	49 89 cc             	mov    %rcx,%r12
+ 24a:	53                   	push   %rbx
+ 24b:	48 83 ec 08          	sub    $0x8,%rsp
+ 24f:	0f b6 1d 00 00 00 00 	movzbl 0x0(%rip),%ebx        # 256 <mychardev_read+0x26>
+			252: R_X86_64_PC32	.data+0x19d
+ 256:	4c 8b 31             	mov    (%rcx),%r14
+ 259:	80 fb 01             	cmp    $0x1,%bl
+ 25c:	0f 87 00 00 00 00    	ja     262 <mychardev_read+0x32>
+			25e: R_X86_64_PC32	.text+0x615
+ 262:	83 e3 01             	and    $0x1,%ebx
+ 265:	0f 85 c4 00 00 00    	jne    32f <mychardev_read+0xff>
+ 26b:	48 8b 1d 00 00 00 00 	mov    0x0(%rip),%rbx        # 272 <mychardev_read+0x42>
+			26e: R_X86_64_PC32	.bss-0x4
+ 272:	49 39 de             	cmp    %rbx,%r14
+ 275:	0f 83 d1 00 00 00    	jae    34c <mychardev_read+0x11c>
+ 27b:	4c 29 f3             	sub    %r14,%rbx
+ 27e:	4c 39 eb             	cmp    %r13,%rbx
+ 281:	49 0f 47 dd          	cmova  %r13,%rbx
+ 285:	48 81 fb 00 04 00 00 	cmp    $0x400,%rbx
+ 28c:	0f 87 13 01 00 00    	ja     3a5 <mychardev_read+0x175>
+ 292:	49 8d 86 00 00 00 00 	lea    0x0(%r14),%rax
+			295: R_X86_64_32S	.bss+0x20
+ 299:	66 90                	xchg   %ax,%ax
+ 29b:	48 89 c7             	mov    %rax,%rdi
+ 29e:	ba 01 00 00 00       	mov    $0x1,%edx
+ 2a3:	48 89 de             	mov    %rbx,%rsi
+ 2a6:	48 89 45 d0          	mov    %rax,-0x30(%rbp)
+ 2aa:	e8 00 00 00 00       	call   2af <mychardev_read+0x7f>
+			2ab: R_X86_64_PLT32	__check_object_size-0x4
+ 2af:	48 8b 45 d0          	mov    -0x30(%rbp),%rax
+ 2b3:	48 89 da             	mov    %rbx,%rdx
+ 2b6:	48 89 c6             	mov    %rax,%rsi
+ 2b9:	4c 89 ff             	mov    %r15,%rdi
+ 2bc:	e8 00 00 00 00       	call   2c1 <mychardev_read+0x91>
+			2bd: R_X86_64_PLT32	_copy_to_user-0x4
+ 2c1:	48 85 c0             	test   %rax,%rax
+ 2c4:	0f 85 e8 00 00 00    	jne    3b2 <mychardev_read+0x182>
+ 2ca:	0f b6 15 00 00 00 00 	movzbl 0x0(%rip),%edx        # 2d1 <mychardev_read+0xa1>
+			2cd: R_X86_64_PC32	.data+0x19d
+ 2d1:	49 8d 04 1e          	lea    (%r14,%rbx,1),%rax
+ 2d5:	49 89 04 24          	mov    %rax,(%r12)
+ 2d9:	80 fa 01             	cmp    $0x1,%dl
+ 2dc:	0f 87 00 00 00 00    	ja     2e2 <mychardev_read+0xb2>
+			2de: R_X86_64_PC32	.text+0x59a
+ 2e2:	83 e2 01             	and    $0x1,%edx
+ 2e5:	75 3a                	jne    321 <mychardev_read+0xf1>
+ 2e7:	44 0f b6 25 00 00 00 	movzbl 0x0(%rip),%r12d        # 2ef <mychardev_read+0xbf>
+ 2ee:	00 
+			2eb: R_X86_64_PC32	.data+0x19c
+ 2ef:	41 80 fc 01          	cmp    $0x1,%r12b
+ 2f3:	0f 87 00 00 00 00    	ja     2f9 <mychardev_read+0xc9>
+			2f5: R_X86_64_PC32	.text+0x600
+ 2f9:	41 83 e4 01          	and    $0x1,%r12d
+ 2fd:	0f 85 00 00 00 00    	jne    303 <mychardev_read+0xd3>
+			2ff: R_X86_64_PC32	.text+0x629
+ 303:	48 89 d8             	mov    %rbx,%rax
+ 306:	48 83 c4 08          	add    $0x8,%rsp
+ 30a:	5b                   	pop    %rbx
+ 30b:	41 5c                	pop    %r12
+ 30d:	41 5d                	pop    %r13
+ 30f:	41 5e                	pop    %r14
+ 311:	41 5f                	pop    %r15
+ 313:	5d                   	pop    %rbp
+ 314:	31 d2                	xor    %edx,%edx
+ 316:	31 c9                	xor    %ecx,%ecx
+ 318:	31 f6                	xor    %esi,%esi
+ 31a:	31 ff                	xor    %edi,%edi
+ 31c:	e9 00 00 00 00       	jmp    321 <mychardev_read+0xf1>
+			31d: R_X86_64_PLT32	__x86_return_thunk-0x4
+ 321:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			324: R_X86_64_32S	.data+0x180
+ 328:	e8 00 00 00 00       	call   32d <mychardev_read+0xfd>
+			329: R_X86_64_PLT32	mutex_unlock-0x4
+ 32d:	eb b8                	jmp    2e7 <mychardev_read+0xb7>
+ 32f:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			332: R_X86_64_32S	.data+0x180
+ 336:	e8 00 00 00 00       	call   33b <mychardev_read+0x10b>
+			337: R_X86_64_PLT32	mutex_lock_interruptible-0x4
+ 33b:	85 c0                	test   %eax,%eax
+ 33d:	0f 84 28 ff ff ff    	je     26b <mychardev_read+0x3b>
+ 343:	48 c7 c0 00 fe ff ff 	mov    $0xfffffffffffffe00,%rax
+ 34a:	eb ba                	jmp    306 <mychardev_read+0xd6>
+ 34c:	0f b6 1d 00 00 00 00 	movzbl 0x0(%rip),%ebx        # 353 <mychardev_read+0x123>
+			34f: R_X86_64_PC32	.data+0x19d
+ 353:	80 fb 01             	cmp    $0x1,%bl
+ 356:	0f 87 00 00 00 00    	ja     35c <mychardev_read+0x12c>
+			358: R_X86_64_PC32	.text+0x5d8
+ 35c:	83 e3 01             	and    $0x1,%ebx
+ 35f:	75 36                	jne    397 <mychardev_read+0x167>
+ 361:	0f b6 1d 00 00 00 00 	movzbl 0x0(%rip),%ebx        # 368 <mychardev_read+0x138>
+			364: R_X86_64_PC32	.data+0x19c
+ 368:	80 fb 01             	cmp    $0x1,%bl
+ 36b:	0f 87 00 00 00 00    	ja     371 <mychardev_read+0x141>
+			36d: R_X86_64_PC32	.text+0x5ec
+ 371:	83 e3 01             	and    $0x1,%ebx
+ 374:	0f 85 00 00 00 00    	jne    37a <mychardev_read+0x14a>
+			376: R_X86_64_PC32	.text+0x5b5
+ 37a:	48 83 c4 08          	add    $0x8,%rsp
+ 37e:	31 c0                	xor    %eax,%eax
+ 380:	5b                   	pop    %rbx
+ 381:	41 5c                	pop    %r12
+ 383:	41 5d                	pop    %r13
+ 385:	41 5e                	pop    %r14
+ 387:	41 5f                	pop    %r15
+ 389:	5d                   	pop    %rbp
+ 38a:	31 d2                	xor    %edx,%edx
+ 38c:	31 c9                	xor    %ecx,%ecx
+ 38e:	31 f6                	xor    %esi,%esi
+ 390:	31 ff                	xor    %edi,%edi
+ 392:	e9 00 00 00 00       	jmp    397 <mychardev_read+0x167>
+			393: R_X86_64_PLT32	__x86_return_thunk-0x4
+ 397:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			39a: R_X86_64_32S	.data+0x180
+ 39e:	e8 00 00 00 00       	call   3a3 <mychardev_read+0x173>
+			39f: R_X86_64_PLT32	mutex_unlock-0x4
+ 3a3:	eb bc                	jmp    361 <mychardev_read+0x131>
+ 3a5:	48 89 de             	mov    %rbx,%rsi
+ 3a8:	bf 00 04 00 00       	mov    $0x400,%edi
+ 3ad:	e8 00 00 00 00       	call   3b2 <mychardev_read+0x182>
+			3ae: R_X86_64_PLT32	__copy_overflow-0x4
+ 3b2:	0f b6 1d 00 00 00 00 	movzbl 0x0(%rip),%ebx        # 3b9 <mychardev_read+0x189>
+			3b5: R_X86_64_PC32	.data+0x19d
+ 3b9:	80 fb 01             	cmp    $0x1,%bl
+ 3bc:	0f 87 00 00 00 00    	ja     3c2 <mychardev_read+0x192>
+			3be: R_X86_64_PC32	.text+0x586
+ 3c2:	83 e3 01             	and    $0x1,%ebx
+ 3c5:	75 25                	jne    3ec <mychardev_read+0x1bc>
+ 3c7:	0f b6 1d 00 00 00 00 	movzbl 0x0(%rip),%ebx        # 3ce <mychardev_read+0x19e>
+			3ca: R_X86_64_PC32	.data+0x19c
+ 3ce:	80 fb 01             	cmp    $0x1,%bl
+ 3d1:	0f 87 00 00 00 00    	ja     3d7 <mychardev_read+0x1a7>
+			3d3: R_X86_64_PC32	.text+0x572
+ 3d7:	83 e3 01             	and    $0x1,%ebx
+ 3da:	0f 85 00 00 00 00    	jne    3e0 <mychardev_read+0x1b0>
+			3dc: R_X86_64_PC32	.text+0x552
+ 3e0:	48 c7 c0 f2 ff ff ff 	mov    $0xfffffffffffffff2,%rax
+ 3e7:	e9 1a ff ff ff       	jmp    306 <mychardev_read+0xd6>
+ 3ec:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			3ef: R_X86_64_32S	.data+0x180
+ 3f3:	e8 00 00 00 00       	call   3f8 <mychardev_read+0x1c8>
+			3f4: R_X86_64_PLT32	mutex_unlock-0x4
+ 3f8:	eb cd                	jmp    3c7 <mychardev_read+0x197>
+
+00000000000003fa <mychardev_release.cold>:
+ 3fa:	0f b6 f0             	movzbl %al,%esi
+ 3fd:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			400: R_X86_64_32S	.data+0x140
+ 404:	88 45 ff             	mov    %al,-0x1(%rbp)
+ 407:	e8 00 00 00 00       	call   40c <mychardev_release.cold+0x12>
+			408: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 40c:	0f b6 45 ff          	movzbl -0x1(%rbp),%eax
+ 410:	e9 00 00 00 00       	jmp    415 <mychardev_release.cold+0x1b>
+			411: R_X86_64_PC32	.text+0x28
+ 415:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 41d <mychardev_release.cold+0x23>
+ 41c:	00 
+			419: R_X86_64_PC32	const_current_task-0x4
+ 41d:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			420: R_X86_64_32S	.rodata+0x168
+ 424:	8b b0 f0 0a 00 00    	mov    0xaf0(%rax),%esi
+ 42a:	48 8d 90 10 0d 00 00 	lea    0xd10(%rax),%rdx
+ 431:	e8 00 00 00 00       	call   436 <mychardev_release.cold+0x3c>
+			432: R_X86_64_PLT32	_printk-0x4
+ 436:	e9 00 00 00 00       	jmp    43b <mychardev_open.cold>
+			437: R_X86_64_PC32	.text+0x30
+
+000000000000043b <mychardev_open.cold>:
+ 43b:	0f b6 f0             	movzbl %al,%esi
+ 43e:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			441: R_X86_64_32S	.data+0x120
+ 445:	88 45 ff             	mov    %al,-0x1(%rbp)
+ 448:	e8 00 00 00 00       	call   44d <mychardev_open.cold+0x12>
+			449: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 44d:	0f b6 45 ff          	movzbl -0x1(%rbp),%eax
+ 451:	e9 00 00 00 00       	jmp    456 <mychardev_open.cold+0x1b>
+			452: R_X86_64_PC32	.text+0x78
+ 456:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 45e <mychardev_open.cold+0x23>
+ 45d:	00 
+			45a: R_X86_64_PC32	const_current_task-0x4
+ 45e:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			461: R_X86_64_32S	.rodata+0x190
+ 465:	8b b0 f0 0a 00 00    	mov    0xaf0(%rax),%esi
+ 46b:	48 8d 90 10 0d 00 00 	lea    0xd10(%rax),%rdx
+ 472:	e8 00 00 00 00       	call   477 <mychardev_open.cold+0x3c>
+			473: R_X86_64_PLT32	_printk-0x4
+ 477:	e9 00 00 00 00       	jmp    47c <mychardev_write.cold>
+			478: R_X86_64_PC32	.text+0x80
+
+000000000000047c <mychardev_write.cold>:
+ 47c:	41 0f b6 f4          	movzbl %r12b,%esi
+ 480:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			483: R_X86_64_32S	.data+0xc0
+ 487:	e8 00 00 00 00       	call   48c <mychardev_write.cold+0x10>
+			488: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 48c:	e9 00 00 00 00       	jmp    491 <mychardev_write.cold+0x15>
+			48d: R_X86_64_PC32	.text+0x151
+ 491:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 499 <mychardev_write.cold+0x1d>
+ 498:	00 
+			495: R_X86_64_PC32	const_current_task-0x4
+ 499:	48 89 d9             	mov    %rbx,%rcx
+ 49c:	4c 89 ee             	mov    %r13,%rsi
+ 49f:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			4a2: R_X86_64_32S	.rodata+0x240
+ 4a6:	48 8d 90 10 0d 00 00 	lea    0xd10(%rax),%rdx
+ 4ad:	e8 00 00 00 00       	call   4b2 <mychardev_write.cold+0x36>
+			4ae: R_X86_64_PLT32	_printk-0x4
+ 4b2:	e9 00 00 00 00       	jmp    4b7 <mychardev_write.cold+0x3b>
+			4b3: R_X86_64_PC32	.text+0x17b
+ 4b7:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 4bf <mychardev_write.cold+0x43>
+ 4be:	00 
+			4bb: R_X86_64_PC32	const_current_task-0x4
+ 4bf:	4c 89 ee             	mov    %r13,%rsi
+ 4c2:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			4c5: R_X86_64_32S	.rodata+0x1b8
+ 4c9:	48 8d 90 10 0d 00 00 	lea    0xd10(%rax),%rdx
+ 4d0:	e8 00 00 00 00       	call   4d5 <mychardev_write.cold+0x59>
+			4d1: R_X86_64_PLT32	_printk-0x4
+ 4d5:	e9 00 00 00 00       	jmp    4da <mychardev_write.cold+0x5e>
+			4d6: R_X86_64_PC32	.text+0x205
+ 4da:	0f b6 f3             	movzbl %bl,%esi
+ 4dd:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			4e0: R_X86_64_32S	.data+0xa0
+ 4e4:	e8 00 00 00 00       	call   4e9 <mychardev_write.cold+0x6d>
+			4e5: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 4e9:	e9 00 00 00 00       	jmp    4ee <mychardev_write.cold+0x72>
+			4ea: R_X86_64_PC32	.text+0x1fc
+ 4ee:	0f b6 f0             	movzbl %al,%esi
+ 4f1:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			4f4: R_X86_64_32S	.data+0xe0
+ 4f8:	88 45 d7             	mov    %al,-0x29(%rbp)
+ 4fb:	e8 00 00 00 00       	call   500 <mychardev_write.cold+0x84>
+			4fc: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 500:	0f b6 45 d7          	movzbl -0x29(%rbp),%eax
+ 504:	e9 00 00 00 00       	jmp    509 <mychardev_write.cold+0x8d>
+			505: R_X86_64_PC32	.text+0x11b
+ 509:	41 0f b6 f4          	movzbl %r12b,%esi
+ 50d:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			510: R_X86_64_32S	.data+0x60
+ 514:	e8 00 00 00 00       	call   519 <mychardev_write.cold+0x9d>
+			515: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 519:	e9 00 00 00 00       	jmp    51e <mychardev_write.cold+0xa2>
+			51a: R_X86_64_PC32	.text+0x171
+ 51e:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 526 <mychardev_write.cold+0xaa>
+ 525:	00 
+			522: R_X86_64_PC32	const_current_task-0x4
+ 526:	4c 89 fa             	mov    %r15,%rdx
+ 529:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			52c: R_X86_64_32S	.rodata+0x200
+ 530:	48 8d b0 10 0d 00 00 	lea    0xd10(%rax),%rsi
+ 537:	e8 00 00 00 00       	call   53c <mychardev_write.cold+0xc0>
+			538: R_X86_64_PLT32	_printk-0x4
+ 53c:	e9 00 00 00 00       	jmp    541 <mychardev_write.cold+0xc5>
+			53d: R_X86_64_PC32	.text+0x17b
+ 541:	41 0f b6 f4          	movzbl %r12b,%esi
+ 545:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			548: R_X86_64_32S	.data+0x80
+ 54c:	e8 00 00 00 00       	call   551 <mychardev_write.cold+0xd5>
+			54d: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 551:	e9 00 00 00 00       	jmp    556 <mychardev_read.cold>
+			552: R_X86_64_PC32	.text+0x1de
+
+0000000000000556 <mychardev_read.cold>:
+ 556:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 55e <mychardev_read.cold+0x8>
+ 55d:	00 
+			55a: R_X86_64_PC32	const_current_task-0x4
+ 55e:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			561: R_X86_64_32S	.rodata+0x2c0
+ 565:	48 8d b0 10 0d 00 00 	lea    0xd10(%rax),%rsi
+ 56c:	e8 00 00 00 00       	call   571 <mychardev_read.cold+0x1b>
+			56d: R_X86_64_PLT32	_printk-0x4
+ 571:	e9 00 00 00 00       	jmp    576 <mychardev_read.cold+0x20>
+			572: R_X86_64_PC32	.text+0x3dc
+ 576:	0f b6 f3             	movzbl %bl,%esi
+ 579:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			57c: R_X86_64_32S	.data+0x20
+ 580:	e8 00 00 00 00       	call   585 <mychardev_read.cold+0x2f>
+			581: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 585:	e9 00 00 00 00       	jmp    58a <mychardev_read.cold+0x34>
+			586: R_X86_64_PC32	.text+0x3d3
+ 58a:	0f b6 f3             	movzbl %bl,%esi
+ 58d:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			590: R_X86_64_32S	.data+0xc0
+ 594:	e8 00 00 00 00       	call   599 <mychardev_read.cold+0x43>
+			595: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 599:	e9 00 00 00 00       	jmp    59e <mychardev_read.cold+0x48>
+			59a: R_X86_64_PC32	.text+0x3be
+ 59e:	0f b6 f2             	movzbl %dl,%esi
+ 5a1:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			5a4: R_X86_64_32S	.data+0xc0
+ 5a8:	88 55 d0             	mov    %dl,-0x30(%rbp)
+ 5ab:	e8 00 00 00 00       	call   5b0 <mychardev_read.cold+0x5a>
+			5ac: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 5b0:	0f b6 55 d0          	movzbl -0x30(%rbp),%edx
+ 5b4:	e9 00 00 00 00       	jmp    5b9 <mychardev_read.cold+0x63>
+			5b5: R_X86_64_PC32	.text+0x2de
+ 5b9:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 5c1 <mychardev_read.cold+0x6b>
+ 5c0:	00 
+			5bd: R_X86_64_PC32	const_current_task-0x4
+ 5c1:	4c 89 ee             	mov    %r13,%rsi
+ 5c4:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			5c7: R_X86_64_32S	.rodata+0x278
+ 5cb:	48 8d 90 10 0d 00 00 	lea    0xd10(%rax),%rdx
+ 5d2:	e8 00 00 00 00       	call   5d7 <mychardev_read.cold+0x81>
+			5d3: R_X86_64_PLT32	_printk-0x4
+ 5d7:	e9 00 00 00 00       	jmp    5dc <mychardev_read.cold+0x86>
+			5d8: R_X86_64_PC32	.text+0x376
+ 5dc:	0f b6 f3             	movzbl %bl,%esi
+ 5df:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			5e2: R_X86_64_32S	.data+0xc0
+ 5e6:	e8 00 00 00 00       	call   5eb <mychardev_read.cold+0x95>
+			5e7: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 5eb:	e9 00 00 00 00       	jmp    5f0 <mychardev_read.cold+0x9a>
+			5ec: R_X86_64_PC32	.text+0x358
+ 5f0:	0f b6 f3             	movzbl %bl,%esi
+ 5f3:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			5f6: R_X86_64_32S	.data+0x40
+ 5fa:	e8 00 00 00 00       	call   5ff <mychardev_read.cold+0xa9>
+			5fb: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 5ff:	e9 00 00 00 00       	jmp    604 <mychardev_read.cold+0xae>
+			600: R_X86_64_PC32	.text+0x36d
+ 604:	41 0f b6 f4          	movzbl %r12b,%esi
+ 608:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			60b: R_X86_64_32S	.data
+ 60f:	e8 00 00 00 00       	call   614 <mychardev_read.cold+0xbe>
+			610: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 614:	e9 00 00 00 00       	jmp    619 <mychardev_read.cold+0xc3>
+			615: R_X86_64_PC32	.text+0x2f5
+ 619:	0f b6 f3             	movzbl %bl,%esi
+ 61c:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			61f: R_X86_64_32S	.data+0xe0
+ 623:	e8 00 00 00 00       	call   628 <mychardev_read.cold+0xd2>
+			624: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 628:	e9 00 00 00 00       	jmp    62d <mychardev_read.cold+0xd7>
+			629: R_X86_64_PC32	.text+0x25e
+ 62d:	65 48 8b 05 00 00 00 	mov    %gs:0x0(%rip),%rax        # 635 <mychardev_read.cold+0xdf>
+ 634:	00 
+			631: R_X86_64_PC32	const_current_task-0x4
+ 635:	48 89 d9             	mov    %rbx,%rcx
+ 638:	4c 89 ee             	mov    %r13,%rsi
+ 63b:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			63e: R_X86_64_32S	.rodata+0x300
+ 642:	48 8d 90 10 0d 00 00 	lea    0xd10(%rax),%rdx
+ 649:	e8 00 00 00 00       	call   64e <mychardev_read.cold+0xf8>
+			64a: R_X86_64_PLT32	_printk-0x4
+ 64e:	e9 00 00 00 00       	jmp    653 <mychardev_read.cold+0xfd>
+			64f: R_X86_64_PC32	.text+0x2ff
+
+Disassembly of section .exit.text:
+
+0000000000000000 <__pfx_cleanup_module>:
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+
+0000000000000010 <cleanup_module>:
+  10:	8b 35 00 00 00 00    	mov    0x0(%rip),%esi        # 16 <cleanup_module+0x6>
+			12: R_X86_64_PC32	.bss+0x4a4
+  16:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 1d <cleanup_module+0xd>
+			19: R_X86_64_PC32	.bss+0x41c
+  1d:	55                   	push   %rbp
+  1e:	48 89 e5             	mov    %rsp,%rbp
+  21:	e8 00 00 00 00       	call   26 <cleanup_module+0x16>
+			22: R_X86_64_PLT32	device_destroy-0x4
+  26:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 2d <cleanup_module+0x1d>
+			29: R_X86_64_PC32	.bss+0x41c
+  2d:	e8 00 00 00 00       	call   32 <cleanup_module+0x22>
+			2e: R_X86_64_PLT32	class_destroy-0x4
+  32:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			35: R_X86_64_32S	.bss+0x440
+  39:	e8 00 00 00 00       	call   3e <cleanup_module+0x2e>
+			3a: R_X86_64_PLT32	cdev_del-0x4
+  3e:	8b 3d 00 00 00 00    	mov    0x0(%rip),%edi        # 44 <cleanup_module+0x34>
+			40: R_X86_64_PC32	.bss+0x4a4
+  44:	be 01 00 00 00       	mov    $0x1,%esi
+  49:	e8 00 00 00 00       	call   4e <cleanup_module+0x3e>
+			4a: R_X86_64_PLT32	unregister_chrdev_region-0x4
+  4e:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			51: R_X86_64_32S	.rodata
+  55:	e8 00 00 00 00       	call   5a <cleanup_module+0x4a>
+			56: R_X86_64_PLT32	_printk-0x4
+  5a:	5d                   	pop    %rbp
+  5b:	31 c0                	xor    %eax,%eax
+  5d:	31 f6                	xor    %esi,%esi
+  5f:	31 ff                	xor    %edi,%edi
+  61:	e9 00 00 00 00       	jmp    66 <mychardev_open+0x6>
+			62: R_X86_64_PLT32	__x86_return_thunk-0x4
+
+Disassembly of section .init.text:
+
+0000000000000000 <__pfx_init_module>:
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	90                   	nop
+   6:	90                   	nop
+   7:	90                   	nop
+   8:	90                   	nop
+   9:	90                   	nop
+   a:	90                   	nop
+   b:	90                   	nop
+   c:	90                   	nop
+   d:	90                   	nop
+   e:	90                   	nop
+   f:	90                   	nop
+
+0000000000000010 <init_module>:
+  10:	e8 00 00 00 00       	call   15 <init_module+0x5>
+			11: R_X86_64_PLT32	__fentry__-0x4
+  15:	55                   	push   %rbp
+  16:	31 f6                	xor    %esi,%esi
+  18:	48 c7 c1 00 00 00 00 	mov    $0x0,%rcx
+			1b: R_X86_64_32S	.rodata+0x25
+  1f:	ba 01 00 00 00       	mov    $0x1,%edx
+  24:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			27: R_X86_64_32S	.bss+0x4a8
+  2b:	48 89 e5             	mov    %rsp,%rbp
+  2e:	53                   	push   %rbx
+  2f:	e8 00 00 00 00       	call   34 <init_module+0x24>
+			30: R_X86_64_PLT32	alloc_chrdev_region-0x4
+  34:	85 c0                	test   %eax,%eax
+  36:	79 13                	jns    4b <init_module+0x3b>
+  38:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			3b: R_X86_64_32S	.rodata+0x70
+  3f:	89 c3                	mov    %eax,%ebx
+  41:	e8 00 00 00 00       	call   46 <init_module+0x36>
+			42: R_X86_64_PLT32	_printk-0x4
+  46:	e9 3b 01 00 00       	jmp    186 <init_module+0x176>
+  4b:	8b 35 00 00 00 00    	mov    0x0(%rip),%esi        # 51 <init_module+0x41>
+			4d: R_X86_64_PC32	.bss+0x4a4
+  51:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			54: R_X86_64_32S	.rodata+0xa0
+  58:	89 f2                	mov    %esi,%edx
+  5a:	c1 ee 14             	shr    $0x14,%esi
+  5d:	81 e2 ff ff 0f 00    	and    $0xfffff,%edx
+  63:	e8 00 00 00 00       	call   68 <init_module+0x58>
+			64: R_X86_64_PLT32	_printk-0x4
+  68:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+			6b: R_X86_64_32S	.rodata+0x340
+  6f:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			72: R_X86_64_32S	.bss+0x440
+  76:	e8 00 00 00 00       	call   7b <init_module+0x6b>
+			77: R_X86_64_PLT32	cdev_init-0x4
+  7b:	8b 35 00 00 00 00    	mov    0x0(%rip),%esi        # 81 <init_module+0x71>
+			7d: R_X86_64_PC32	.bss+0x4a4
+  81:	ba 01 00 00 00       	mov    $0x1,%edx
+  86:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			89: R_X86_64_32S	.bss+0x440
+  8d:	48 c7 05 00 00 00 00 	movq   $0x0,0x0(%rip)        # 98 <init_module+0x88>
+  94:	00 00 00 00 
+			90: R_X86_64_PC32	.bss+0x478
+			94: R_X86_64_32S	__this_module
+  98:	e8 00 00 00 00       	call   9d <init_module+0x8d>
+			99: R_X86_64_PLT32	cdev_add-0x4
+  9d:	89 c3                	mov    %eax,%ebx
+  9f:	85 c0                	test   %eax,%eax
+  a1:	79 11                	jns    b4 <init_module+0xa4>
+  a3:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			a6: R_X86_64_32S	.rodata+0x2f
+  aa:	e8 00 00 00 00       	call   af <init_module+0x9f>
+			ab: R_X86_64_PLT32	_printk-0x4
+  af:	e9 c2 00 00 00       	jmp    176 <init_module+0x166>
+  b4:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			b7: R_X86_64_32S	.rodata+0x4d
+  bb:	e8 00 00 00 00       	call   c0 <init_module+0xb0>
+			bc: R_X86_64_PLT32	class_create-0x4
+  c0:	48 89 05 00 00 00 00 	mov    %rax,0x0(%rip)        # c7 <init_module+0xb7>
+			c3: R_X86_64_PC32	.bss+0x41c
+  c7:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+  cd:	76 13                	jbe    e2 <init_module+0xd2>
+  cf:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			d2: R_X86_64_32S	.rodata+0xd0
+  d6:	89 c3                	mov    %eax,%ebx
+  d8:	e8 00 00 00 00       	call   dd <init_module+0xcd>
+			d9: R_X86_64_PLT32	_printk-0x4
+  dd:	e9 88 00 00 00       	jmp    16a <init_module+0x15a>
+  e2:	8b 15 00 00 00 00    	mov    0x0(%rip),%edx        # e8 <init_module+0xd8>
+			e4: R_X86_64_PC32	.bss+0x4a4
+  e8:	31 c9                	xor    %ecx,%ecx
+  ea:	31 f6                	xor    %esi,%esi
+  ec:	48 89 c7             	mov    %rax,%rdi
+  ef:	49 c7 c0 00 00 00 00 	mov    $0x0,%r8
+			f2: R_X86_64_32S	.rodata+0x25
+  f6:	e8 00 00 00 00       	call   fb <init_module+0xeb>
+			f7: R_X86_64_PLT32	device_create-0x4
+  fb:	48 3d 00 f0 ff ff    	cmp    $0xfffffffffffff000,%rax
+ 101:	76 1c                	jbe    11f <init_module+0x10f>
+ 103:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			106: R_X86_64_32S	.rodata+0xf8
+ 10a:	89 c3                	mov    %eax,%ebx
+ 10c:	e8 00 00 00 00       	call   111 <init_module+0x101>
+			10d: R_X86_64_PLT32	_printk-0x4
+ 111:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 118 <init_module+0x108>
+			114: R_X86_64_PC32	.bss+0x41c
+ 118:	e8 00 00 00 00       	call   11d <init_module+0x10d>
+			119: R_X86_64_PLT32	class_destroy-0x4
+ 11d:	eb 4b                	jmp    16a <init_module+0x15a>
+ 11f:	8a 1d 00 00 00 00    	mov    0x0(%rip),%bl        # 125 <init_module+0x115>
+			121: R_X86_64_PC32	.data+0x19d
+ 125:	80 fb 01             	cmp    $0x1,%bl
+ 128:	76 0f                	jbe    139 <init_module+0x129>
+ 12a:	0f b6 f3             	movzbl %bl,%esi
+ 12d:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			130: R_X86_64_32S	.data+0x100
+ 134:	e8 00 00 00 00       	call   139 <init_module+0x129>
+			135: R_X86_64_PLT32	__ubsan_handle_load_invalid_value-0x4
+ 139:	80 e3 01             	and    $0x1,%bl
+ 13c:	48 c7 c0 00 00 00 00 	mov    $0x0,%rax
+			13f: R_X86_64_32S	.rodata+0x1e
+ 143:	48 c7 c1 00 00 00 00 	mov    $0x0,%rcx
+			146: R_X86_64_32S	.rodata+0x21
+ 14a:	ba 00 04 00 00       	mov    $0x400,%edx
+ 14f:	48 0f 45 c8          	cmovne %rax,%rcx
+ 153:	48 c7 c6 00 00 00 00 	mov    $0x0,%rsi
+			156: R_X86_64_32S	.rodata+0x25
+ 15a:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			15d: R_X86_64_32S	.rodata+0x120
+ 161:	31 db                	xor    %ebx,%ebx
+ 163:	e8 00 00 00 00       	call   168 <init_module+0x158>
+			164: R_X86_64_PLT32	_printk-0x4
+ 168:	eb 1c                	jmp    186 <init_module+0x176>
+ 16a:	48 c7 c7 00 00 00 00 	mov    $0x0,%rdi
+			16d: R_X86_64_32S	.bss+0x440
+ 171:	e8 00 00 00 00       	call   176 <init_module+0x166>
+			172: R_X86_64_PLT32	cdev_del-0x4
+ 176:	8b 3d 00 00 00 00    	mov    0x0(%rip),%edi        # 17c <init_module+0x16c>
+			178: R_X86_64_PC32	.bss+0x4a4
+ 17c:	be 01 00 00 00       	mov    $0x1,%esi
+ 181:	e8 00 00 00 00       	call   186 <init_module+0x176>
+			182: R_X86_64_PLT32	unregister_chrdev_region-0x4
+ 186:	89 d8                	mov    %ebx,%eax
+ 188:	5b                   	pop    %rbx
+ 189:	5d                   	pop    %rbp
+ 18a:	31 d2                	xor    %edx,%edx
+ 18c:	31 c9                	xor    %ecx,%ecx
+ 18e:	31 f6                	xor    %esi,%esi
+ 190:	31 ff                	xor    %edi,%edi
+ 192:	45 31 c0             	xor    %r8d,%r8d
+ 195:	e9 00 00 00 00       	jmp    19a <buf_lock+0x1a>
+			196: R_X86_64_PLT32	__x86_return_thunk-0x4

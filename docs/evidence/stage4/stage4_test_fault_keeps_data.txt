@@ -1,0 +1,3 @@
+$ echo keep-me | sudo tee /dev/mychardev; sudo ./test_driver fault; sudo cat /dev/mychardev
+read back: keep-me
+PASS: failed write left the stored data unchanged

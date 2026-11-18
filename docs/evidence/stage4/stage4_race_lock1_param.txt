@@ -1,0 +1,2 @@
+$ cat /sys/module/mychardev/parameters/use_lock
+Y

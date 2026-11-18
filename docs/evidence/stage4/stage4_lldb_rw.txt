@@ -1,0 +1,123 @@
+(lldb) target create "<home>/driver-project/user/test_driver"
+Current executable set to '<home>/driver-project/user/test_driver' (x86_64).
+(lldb) settings set -- target.run-args  "rw" "hello from lldb"
+(lldb) settings set auto-confirm true
+(lldb) breakpoint set --name cmd_rw
+Breakpoint 1: where = test_driver`cmd_rw + 37 at test_driver.c:33:18, address = 0x000000000000142e
+(lldb) breakpoint set --name open --name open64
+Breakpoint 2: no locations (pending).
+WARNING:  Unable to resolve breakpoint to any actual locations.
+(lldb) breakpoint set --name write --condition '$rdi == 3'
+Breakpoint 3: no locations (pending).
+WARNING:  Unable to resolve breakpoint to any actual locations.
+(lldb) breakpoint set --name read --condition '$rdi == 3'
+Breakpoint 4: no locations (pending).
+WARNING:  Unable to resolve breakpoint to any actual locations.
+(lldb) run
+1 location added to breakpoint 2
+1 location added to breakpoint 3
+5 locations added to breakpoint 4
+Process 3500 launched: '<home>/driver-project/user/test_driver' (x86_64)
+Process 3500 stopped
+* thread #1, name = 'test_driver', stop reason = breakpoint 1.1
+    frame #0: 0x000055555555542e test_driver`cmd_rw(text="hello from lldb") at test_driver.c:33:18
+   30  	static int cmd_rw(const char *text)
+   31  	{
+   32  	    char rbuf[BUF_SIZE + 1];
+-> 33  	    size_t len = strlen(text);
+    	                 ^
+   34  	    ssize_t n;
+   35  	    int fd;
+   36
+(lldb) script print("\n--- stopped in cmd_rw: the stack frame ---")
+
+--- stopped in cmd_rw: the stack frame ---
+(lldb) bt
+* thread #1, name = 'test_driver', stop reason = breakpoint 1.1
+  * frame #0: 0x000055555555542e test_driver`cmd_rw(text="hello from lldb") at test_driver.c:33:18
+    frame #1: 0x00005555555560b1 test_driver`main(argc=3, argv=0x00007fffffffe198) at test_driver.c:345:16
+    frame #2: 0x00007ffff7c2a601 libc.so.6`__libc_start_call_main(main=(test_driver`main at test_driver.c:341:1), argc=3, argv=0x00007fffffffe198) at libc_start_call_main.h:59:16
+    frame #3: 0x00007ffff7c2a718 libc.so.6`__libc_start_main_impl(main=(test_driver`main at test_driver.c:341:1), argc=3, argv=0x00007fffffffe198, init=<unavailable>, fini=<unavailable>, rtld_fini=<unavailable>, stack_end=0x00007fffffffe188) at libc-start.c:360:3
+    frame #4: 0x0000555555555345 test_driver`_start + 37
+(lldb) register read rsp rbp rip
+     rsp = 0x00007fffffffdbf0
+     rbp = 0x00007fffffffe030
+     rip = 0x000055555555542e  test_driver`cmd_rw + 37 at test_driver.c:33:18
+(lldb) frame variable --location text len n fd
+0x00007fffffffdbf8: (const char *) text = 0x00007fffffffe3f7 "hello from lldb"
+0x00007fffffffdc10: (size_t) len = 3
+0x00007fffffffdc18: (ssize_t) n = 140737353876840
+0x00007fffffffdc0c: (int) fd = 32767
+(lldb) expression -- (void *)rbuf
+(void *) $0 = 0x00007fffffffdc20
+(lldb) continue
+Process 3500 resuming
+Process 3500 stopped
+* thread #1, name = 'test_driver', stop reason = breakpoint 2.1
+    frame #0: 0x00007ffff7d27990 libc.so.6`__libc_open64(file="/dev/mychardev", oflag=1) at open64.c:30:1
+(lldb) script print("\n--- open(path=rdi, flags=rsi) ---")
+
+--- open(path=rdi, flags=rsi) ---
+(lldb) register read rdi rsi
+     rdi = 0x0000555555557008  
+     rsi = 0x0000000000000001
+(lldb) memory read --format s $rdi
+0x555555557008: "/dev/mychardev"
+(lldb) continue
+write buffer is at user address 0x7fffffffe3f7 (15 bytes)
+Process 3500 resuming
+Process 3500 stopped
+* thread #1, name = 'test_driver', stop reason = breakpoint 3.1
+    frame #0: 0x00007ffff7d28c10 libc.so.6`__GI___libc_write(fd=3, buf=0x00007fffffffe3f7, nbytes=15) at write.c:25:1
+(lldb) script print("\n--- write(fd=rdi, buf=rsi, count=rdx) ---")
+
+--- write(fd=rdi, buf=rsi, count=rdx) ---
+(lldb) register read rdi rsi rdx
+     rdi = 0x0000000000000003
+     rsi = 0x00007fffffffe3f7
+     rdx = 0x000000000000000f
+(lldb) memory read --format s $rsi
+0x7fffffffe3f7: "hello from lldb"
+(lldb) continue
+write() returned 15
+Process 3500 resuming
+Process 3500 stopped
+* thread #1, name = 'test_driver', stop reason = breakpoint 2.1
+    frame #0: 0x00007ffff7d27990 libc.so.6`__libc_open64(file="/dev/mychardev", oflag=0) at open64.c:30:1
+(lldb) continue
+read buffer is at user address 0x7fffffffdc20
+Process 3500 resuming
+Process 3500 stopped
+* thread #1, name = 'test_driver', stop reason = breakpoint 4.5
+    frame #0: 0x00007ffff7d28150 libc.so.6`__GI___libc_read(fd=3, buf=0x00007fffffffdc20, nbytes=1024) at read.c:25:1
+(lldb) script print("\n--- read(fd=rdi, buf=rsi, count=rdx) ---")
+
+--- read(fd=rdi, buf=rsi, count=rdx) ---
+(lldb) register read rdi rsi rdx
+     rdi = 0x0000000000000003
+     rsi = 0x00007fffffffdc20
+     rdx = 0x0000000000000400
+(lldb) thread step-out
+Process 3500 stopped
+* thread #1, name = 'test_driver', stop reason = step out
+Return value: (ssize_t) $3 = 15
+
+    frame #0: 0x00005555555555a5 test_driver`cmd_rw(text="hello from lldb") at test_driver.c:62:9
+   59  	        return 1;
+   60  	    }
+   61  	    printf("read buffer is at user address %p\n", (void *)rbuf);
+-> 62  	    n = read(fd, rbuf, BUF_SIZE);
+    	        ^
+   63  	    if (n < 0)
+   64  	    {
+   65  	        perror("read");
+(lldb) script print("\n--- read() returned: rax = bytes read ---")
+
+--- read() returned: rax = bytes read ---
+(lldb) register read rax
+     rax = 0x000000000000000f
+(lldb) continue
+read() returned 15: "hello from lldb"
+PASS: data read back matches data written
+Process 3500 resuming
+Process 3500 exited with status = 0 (0x00000000)

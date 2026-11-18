@@ -1,0 +1,2 @@
+openat(AT_FDCWD, "/dev/mychardev", O_WRONLY) = 3
+write(3, 0x1, 16)                       = -1 EFAULT (Bad address)

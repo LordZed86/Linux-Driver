@@ -1,0 +1,5 @@
+$ sudo ./test_driver big
+write of 2000 bytes returned 1024 (short write: buffer holds 1024)
+second write returned -1, errno = 28 (No space left on device)
+PASS: short write, then ENOSPC
+[exit status 0]

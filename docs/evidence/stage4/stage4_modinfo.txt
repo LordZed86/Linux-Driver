@@ -1,0 +1,12 @@
+filename:       <home>/driver-project/module/mychardev.ko
+version:        0.4
+description:    Virtual character device driver for CS 370
+author:         Kellen Jones
+license:        GPL
+srcversion:     CE4F1B9AB9A6B492394E03A
+depends:        
+name:           mychardev
+retpoline:      Y
+vermagic:       7.0.0-38-generic SMP preempt mod_unload modversions 
+parm:           use_lock:Protect the buffer with a mutex (default: 1) (bool)
+parm:           verbose:Log every open/read/write/release (default: 1) (bool)

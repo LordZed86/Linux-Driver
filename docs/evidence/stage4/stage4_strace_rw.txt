@@ -1,0 +1,4 @@
+openat(AT_FDCWD, "/dev/mychardev", O_WRONLY) = 3
+write(3, "strace demo", 11)             = 11
+openat(AT_FDCWD, "/dev/mychardev", O_RDONLY) = 3
+read(3, "strace demo", 1024)            = 11

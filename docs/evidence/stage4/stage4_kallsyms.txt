@@ -1,0 +1,19 @@
+$ sudo grep "\[mychardev\]" /proc/kallsyms | grep -E "kbuf|mychardev_(read|write|open|release)"
+ffffffffc077b010 t mychardev_release	[mychardev]
+ffffffffc077b3fa t mychardev_release.cold	[mychardev]
+ffffffffc077b060 t mychardev_open	[mychardev]
+ffffffffc077b43b t mychardev_open.cold	[mychardev]
+ffffffffc077b0b0 t mychardev_write	[mychardev]
+ffffffffc09a7060 b kbuf	[mychardev]
+ffffffffc09a7040 b kbuf_len	[mychardev]
+ffffffffc077b47c t mychardev_write.cold	[mychardev]
+ffffffffc077b230 t mychardev_read	[mychardev]
+ffffffffc077b556 t mychardev_read.cold	[mychardev]
+ffffffffc077b000 t __pfx_mychardev_release	[mychardev]
+ffffffffc077b050 t __pfx_mychardev_open	[mychardev]
+ffffffffc077b0a0 t __pfx_mychardev_write	[mychardev]
+ffffffffc077b220 t __pfx_mychardev_read	[mychardev]
+
+$ sudo ./test_driver rw
+write buffer is at user address 0x60c86524f43c (21 bytes)
+read buffer is at user address 0x7ffc86aa93d0
