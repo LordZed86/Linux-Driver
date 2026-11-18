@@ -10,7 +10,7 @@
  *   fault  pass a bad pointer to write(); the driver should answer EFAULT
  *   race [iterations]
  *          2 writers and 2 readers hammer the buffer; count torn reads
- *          (default 2000 iterations per process)
+ *          (default 20000 iterations per process)
  */
 #define _POSIX_C_SOURCE 200809L
 
@@ -176,7 +176,7 @@ static int cmd_fault(void)
 /* ---- race: concurrent writers and readers ----------------------------- */
 #define WRITERS 2
 #define READERS 2
-#define DEFAULT_ITER 2000
+#define DEFAULT_ITER 20000
 
 static int iter = DEFAULT_ITER;
 
@@ -186,21 +186,24 @@ struct result
     int torn;
 };
 
+/*
+ * Each process opens the device once and then loops with pwrite/pread at
+ * offset 0, so every iteration is one system call and one 1024-byte copy.
+ * (Opening and closing on every iteration spends most of the time in
+ * open/close, which makes the unlocked race too rare to show up.)
+ */
 static void writer_proc(int id)
 {
     char fill[BUF_SIZE];
+    int fd = open(DEV, O_WRONLY);
 
+    if (fd < 0)
+        _exit(1);
     memset(fill, 'A' + id, sizeof fill);
     for (int i = 0; i < iter; i++)
-    {
-        int fd = open(DEV, O_WRONLY);
-
-        if (fd < 0)
+        if (pwrite(fd, fill, sizeof fill, 0) != BUF_SIZE)
             _exit(1);
-        if (write(fd, fill, sizeof fill) != BUF_SIZE)
-            _exit(1);
-        close(fd);
-    }
+    close(fd);
     _exit(0);
 }
 
@@ -209,16 +212,13 @@ static void reader_proc(int wfd)
 {
     struct result r = {0, 0};
     char buf[BUF_SIZE];
+    int fd = open(DEV, O_RDONLY);
 
+    if (fd < 0)
+        _exit(1);
     for (int i = 0; i < iter; i++)
     {
-        int fd = open(DEV, O_RDONLY);
-        ssize_t n;
-
-        if (fd < 0)
-            _exit(1);
-        n = read(fd, buf, sizeof buf);
-        close(fd);
+        ssize_t n = pread(fd, buf, sizeof buf, 0);
 
         r.checked++;
         if (n != BUF_SIZE)
@@ -235,6 +235,7 @@ static void reader_proc(int wfd)
             }
         }
     }
+    close(fd);
     if (write(wfd, &r, sizeof r) != (ssize_t)sizeof r)
         _exit(1);
     _exit(0);
