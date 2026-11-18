@@ -159,3 +159,18 @@ Chronological record of decisions, bugs, and fixes. Feeds the "challenges" secti
   - The first version of the linking script's filters missed the interpreter line and the static build's symbols, and cut the relocation list off after 20 lines, before the mutex entries; fixed. The module has 8 relocated calls in `.rela.text`: `memdup_user`, `_copy_to_user`, `mutex_lock_interruptible` twice (read and write), and `mutex_unlock` four times (each exit path that holds the lock).
   - In the static build, `open`, `fork`, `pread64`, and `pwrite64` are weak symbols (`W`): glibc's default definitions, which a strong definition of the same name would override.
 - **Next:** Rerun `collect_linking.sh` for the fixed filters, then screenshots, the report, and the slides.
+
+### 2026-11-17 - Repo cleanup and stage 4 screenshots
+
+- **What I did:**
+  - Reorganized `docs/`: presentation material into `docs/presentations/{midterm,final}/`, reports into `docs/reports/`, and course files and raw screenshots into a gitignored `private/` folder. Renamed files to drop spaces (`demo2.sh` → `demo.sh`) and added the full file structure to the README.
+  - Wrote a slide plan and a report paste guide for the final, mapping the midterm report's sections onto the nine required ones.
+  - Took the stage 4 screenshots (shell round trip, `rw`, `big`/`fault`, `dmesg`, race with lock on and off, lldb), cropped them to the terminal text, and named them by content.
+- **What happened (output, errors):**
+  - The raw screenshots showed `dev@driverdev` in the terminal title bar, and the prompt came out as `$ ,` because of a typo in `PS1`.
+  - macOS screenshot names contain an invisible narrow space before "PM", which broke scripts that used the exact names.
+- **What I learned / how I fixed it:**
+  - Cropping off the title bar removes the username and hostname; the originals are kept in `private/raw_screenshots/` and never committed. `.gitignore` now also catches macOS `Screenshot 20…` names.
+  - The race screenshot added a fourth data point: 24 torn reads with the lock off, 23 of them at offset 32, `kbuf`'s cache-line boundary (`race_history/README.md`).
+  - For the demo, set `export PS1='$ '` exactly before sharing the screen.
+- **Next:** Update the report in Pages, build the Keynote deck, rehearse, record a backup demo, and package the ZIP.
