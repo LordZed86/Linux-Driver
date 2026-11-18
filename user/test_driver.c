@@ -147,7 +147,10 @@ static int cmd_big(void)
 /* ---- fault: bad user pointer ------------------------------------------ */
 static int cmd_fault(void)
 {
-    const void *bad = (const void *)(uintptr_t)1; /* not a valid address */
+    /* volatile hides the bad address from the optimizer, which otherwise
+     * warns at -O2 that write() reads from address 1 (that's the point) */
+    volatile uintptr_t bad_addr = 1;
+    const void *bad = (const void *)bad_addr; /* not a valid address */
     ssize_t n;
     int err;
     int fd = open(DEV, O_WRONLY);
@@ -203,6 +206,7 @@ struct result
     int torn;
     int switches_by_offset[LINE]; /* where the letter changes, offset % 64 */
     int multi;                    /* torn reads with more than one change */
+    int buf_offset;               /* reader's buffer address % 64 */
 };
 
 /*
@@ -239,6 +243,7 @@ static void reader_proc(int wfd)
     int fd = open(DEV, O_RDONLY);
 
     memset(&r, 0, sizeof r);
+    r.buf_offset = (int)((uintptr_t)buf % LINE);
     if (fd < 0)
         _exit(1);
     wait_for_start();
@@ -302,6 +307,7 @@ static int cmd_race(void)
 {
     char seed[BUF_SIZE];
     struct result r, total;
+    int offsets[READERS], nreaders = 0;
     int pfd[2], gate[2];
     int fd, status, failed = 0;
 
@@ -356,6 +362,8 @@ static int cmd_race(void)
         total.checked += r.checked;
         total.torn += r.torn;
         total.multi += r.multi;
+        if (nreaders < READERS)
+            offsets[nreaders++] = r.buf_offset;
         for (int k = 0; k < LINE; k++)
             total.switches_by_offset[k] += r.switches_by_offset[k];
     }
@@ -367,6 +375,10 @@ static int cmd_race(void)
     printf("%d writers, %d readers, %d iterations each\n",
            WRITERS, READERS, iter);
     printf("reads checked: %d, torn reads: %d\n", total.checked, total.torn);
+    printf("reader buffers start at byte");
+    for (int k = 0; k < nreaders; k++)
+        printf(" %d", offsets[k]);
+    printf(" of their %d-byte cache line\n", LINE);
     if (total.torn > 0)
         print_switch_offsets(&total);
     if (failed)
