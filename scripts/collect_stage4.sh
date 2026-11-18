@@ -15,7 +15,7 @@ set -u
 cd "$(dirname "$0")/.." || exit 1
 ROOT=$PWD
 OUT=$ROOT/docs/evidence/stage4
-RACE_ITER=${RACE_ITER:-20000}
+RACE_ITER=${RACE_ITER:-200000}
 RACE_RUNS=${RACE_RUNS:-3}
 mkdir -p "$OUT"
 

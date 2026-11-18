@@ -162,12 +162,12 @@ mychardev: release by pid ... (test_driver)
 
 ```
 mychardev: module loaded, /dev/mychardev created (buffer 1024 bytes, lock on)
-2 writers, 2 readers, 20000 iterations each
-reads checked: 40000, torn reads: 0
+2 writers, 2 readers, 200000 iterations each
+reads checked: 400000, torn reads: 0
 PASS: no torn reads
 ```
 
-**Say:** "Every process that opens the device shares one kernel buffer, so this is shared memory. This test forks four processes. Two writers fill the whole buffer with A's or B's, over and over. Two readers check that every read is all one letter. Each process opens the device once and then loops as fast as it can. A mix of letters is a torn read: the reader caught the buffer halfway through a write. With the mutex on, only one process can be inside the buffer at a time, and there are zero torn reads out of 40,000."
+**Say:** "Every process that opens the device shares one kernel buffer, so this is shared memory. This test forks four processes. Two writers fill the whole buffer with A's or B's, over and over. Two readers check that every read is all one letter. Each process opens the device once and then loops as fast as it can. A mix of letters is a torn read: the reader caught the buffer halfway through a write. With the mutex on, only one process can be inside the buffer at a time, and there are zero torn reads out of 400,000."
 
 **Why a mutex and not a spinlock (if asked):** "copy_from_user can sleep if the user page isn't in memory, and you can't sleep while holding a spinlock. A mutex lets the waiting process sleep."
 
@@ -177,7 +177,7 @@ PASS: no torn reads
 
 ```
 mychardev: module loaded, /dev/mychardev created (buffer 1024 bytes, lock OFF)
-reads checked: 40000, torn reads: <some number>
+reads checked: 400000, torn reads: <some number>
 FAIL: readers saw partly-written data (is the lock off?)
 ```
 
