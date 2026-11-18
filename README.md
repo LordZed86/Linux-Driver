@@ -85,11 +85,15 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 | Number systems and bitwise ops | `MAJOR()`/`MINOR()` compile to `shr $0x14` and `and $0xfffff`; `crw-------` is octal 600; hex addresses in `nm`/`objdump`            |
 | Assembly and control flow      | `if (ret < 0)` checks compile to `test` plus a conditional jump (`jns`), with a cleanup path on failure                              |
 | Compilation and object files   | `make` builds a relocatable ELF `.ko`; `readelf` shows type `REL`, and `.rela.*` sections hold the relocations the loader patches    |
-| Processes                      | `dmesg` lines name the pid and command that used the device (`tee`, `cat`)                                                           |
+| Processes and scheduling       | `dmesg` names the pid and command; `race` forks 4 processes and checks each exit status with `wait`; a process waiting on the mutex sleeps (blocked state); how the scheduler places 4 processes on 2 vCPUs makes torn reads vary from 7,647 to 1 per run |
 | User vs. kernel space          | Separate address spaces; `copy_to_user` / `copy_from_user` check user pointers and return `EFAULT` on a bad one                      |
 | Concurrency and shared memory  | Several processes share one kernel buffer; a mutex keeps one process inside it at a time, so a read never sees a half-written buffer |
 | Memory                         | Fixed-size buffer with bounds checks: short writes, then `ENOSPC` when full                                                          |
 | The stack                      | lldb shows `cmd_rw`'s frame (`rsp`, `rbp`) with the 1025-byte `rbuf` inside it, and argument registers at `open`/`write`/`read` |
+| Pointers, stack, and heap      | `rbuf` is a stack array; `memdup_user` allocates kernel heap memory, freed with `kfree`; `kbuf` is a static array in `.bss`; a bad pointer gets `EFAULT` instead of a crash |
+| Virtual memory and paging      | User addresses (`0x7fff…`) and kernel addresses (`0xffffffffc0…`) are separate virtual ranges; `copy_to_user` can page-fault and sleep, so the lock is a mutex; ASLR moves user addresses every run |
+| System calls and mode switches | Each `read`/`write` traps from user mode into kernel mode and back (`strace` shows the calls; `dmesg` shows the kernel side) |
+| Linking and loading            | `mychardev.ko` is relocatable (`REL`) and the kernel links it at `insmod`; `test_driver` is dynamically linked (`DYN`) and `ld.so` loads libc at start; a static build needs neither (`scripts/collect_linking.sh`) |
 
 *Note: `mychardev_init` shows up as `init_module` in `objdump` output, because both names refer to the same function.*
 
@@ -117,6 +121,7 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 ├── scripts/                         # Run inside the VM, from the repo root
 │   ├── collect_stage4.sh            #   Builds, runs every test, saves evidence
 │   ├── collect_lldb.sh              #   lldb registers/stack and kernel vs. user addresses
+│   ├── collect_linking.sh           #   ELF types, static vs. dynamic linking, relocations
 │   └── package_submission.sh        #   Builds the submission ZIP from the last commit
 ├── docs/
 │   ├── proposal.md                  # Original project proposal
