@@ -36,6 +36,7 @@ docs/notes/*.pdf
 
 # Raw terminal captures show VM user, hostname, and IP; commit cropped copies instead
 docs/screenshots/**/Screenshot From *
+docs/screenshots/**/Screenshot 20*
 
 # Submission and presentation files (Keynote .key files are already covered by *.key above)
 *.zip

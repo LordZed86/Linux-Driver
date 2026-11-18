@@ -57,6 +57,14 @@ Built for CS 370 — Computer Systems and Architecture.
 
 *Stage 3 running: the module allocates major 239, minor 0 and creates `/dev/mychardev`. `tee` (pid 1581) and `cat` (pid 1590) trigger the open, write, read, and release handlers.*
 
+![Test program writing a string and reading it back](docs/screenshots/stage4/stage4_rw_addresses.png)
+
+*Stage 4: the test program writes 21 bytes, reads them back from the kernel buffer, and prints its two buffers' user-space addresses (a string constant in read-only data and a stack array).*
+
+![Race test with the mutex on, then off](docs/screenshots/stage4/stage4_race_lock_on_off.png)
+
+*The mutex at work: with the lock on, 0 of 1,000,000 reads are torn; reloaded with `use_lock=0`, 24 reads see a half-written buffer, 23 of them split at offset 32, where `kbuf`'s cache lines begin.*
+
 ---
 
 ## How it works
