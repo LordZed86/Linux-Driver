@@ -47,7 +47,8 @@ sudo lldb --batch \
   -o 'script print("\n--- stopped in cmd_rw: the stack frame ---")' \
   -o 'bt' \
   -o 'register read rsp rbp rip' \
-  -o 'frame variable --location' \
+  -o 'frame variable --location text len n fd' \
+  -o 'expression -- (void *)rbuf' \
   -o 'continue' \
   -o 'script print("\n--- open(path=rdi, flags=rsi) ---")' \
   -o 'register read rdi rsi' \
