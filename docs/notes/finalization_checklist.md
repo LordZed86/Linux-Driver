@@ -114,13 +114,13 @@ Submit **exactly two files**: one ZIP (source + supporting files) and one PDF (t
 - [x] Commit, then run `./scripts/collect_stage4.sh`; every mode prints PASS (race with `use_lock=0` is *expected* to FAIL)
 - [x] Run `./scripts/collect_lldb.sh` (registers, stack frame, user vs. kernel addresses)
 - [x] Read every file in `docs/evidence/stage4/` for usernames, hostnames, and IPs; then commit
-- [ ] Screenshots into `docs/screenshots/stage4/`: test_driver rw, big, fault, race lock on vs. off, dmesg, lldb registers
+- [x] Screenshots into `docs/screenshots/stage4/`: test_driver rw, big, fault, race lock on vs. off, dmesg, lldb registers
 - [x] Fix anything that fails, re-run, log it in the dev log (it's material for "Challenges and Solutions")
 
 **Phase 2: docs (Nov 20–21)**
 
 - [x] README: Status checklist, Testing table, status badge
-- [ ] README: stage 4 screenshot in the Screenshots section
+- [x] README: stage 4 screenshot in the Screenshots section
 - [x] Dev log entry for the test run
 - [ ] Bump `MODULE_VERSION` to `1.0` once tests pass
 
