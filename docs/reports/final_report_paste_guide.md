@@ -1,12 +1,11 @@
 # CS 370 Final Report: Paste Guide
 
-Nov 17, 2026 · @kellen is fine
+Nov 17, 2026
 
 ## How to use this guide
 
 Rename and reorder your midterm Pages document into the 9 required sections, move every midterm paragraph into its new home, and paste the final additions under a **Final project update** subheading in each section. The grader can then see the midterm content kept and the new work marked, which is what the guidelines ask for.
 
-Work in a copy: duplicate the Pages file first (File → Duplicate) and name it "CS 370 Final Report".
 
 Each section below has three parts:
 
@@ -80,7 +79,7 @@ The midterm has no matching section. Paste the whole section. In Pages, both lis
 
 ## Section 3: System Design (new)
 
-No matching midterm section. Paste the text, and insert the architecture diagram as **Figure 1**. You can screenshot it from the slide plan doc, or use your Keynote version from slide 4. Renumber the old dmesg figure to Figure 2 (it moves to section 5).
+No matching midterm section. Paste the text, and insert the architecture diagram as **Figure 1**. You can screenshot it from the slide plan doc, or use your Keynote version from slide 4. Renumber the old dmesg figure to Figure 2 (it moves to section 5). Text excerpts (objdump, strace, lldb, kallsyms) are numbered separately as Listings.
 
 **Add:**
 
@@ -152,9 +151,11 @@ This section collects three midterm sections (3, 4, and 9) plus midterm section 
 
 ### 4.5 Technical evidence (keep + add)
 
-**Keep:** all of midterm section 9 (the tool table, the objdump excerpt, and the closing sentence).
+**Keep:** all of midterm section 9 (the tool table, the objdump excerpt, and the closing sentence), in that order. Label the objdump excerpt **Listing 1**, with this caption:
 
-**Add** under "Final project update: stage 4 evidence": short excerpts from these files, each in the same code-block style as the midterm objdump excerpt, with one sentence each on what it shows:
+> Listing 1. objdump -d excerpt from mychardev.ko (stage 3, midterm). The arguments to alloc\_chrdev\_region are loaded into esi, edx and rdi, `if (ret < 0)` compiles to `test` plus a conditional jump (`jns`), and MAJOR()/MINOR() compile to a right shift and a mask.
+
+**Add** under "Final project update: stage 4 evidence": short excerpts from these files, each in the same code-block style as the midterm objdump excerpt, with one sentence each on what it shows. Number them Listing 2–5 in this order:
 
 - stage4\_strace\_rw.txt: the openat, write, and read lines on /dev/mychardev
 - stage4\_lldb\_rw.txt: the write breakpoint's register read (rdi = 3, rsi = buffer address, rdx = length)
@@ -176,7 +177,7 @@ This section is mostly screenshots, each with a caption that explains what it sh
 | 3 | `echo hello \| sudo tee /dev/mychardev` then `sudo cat /dev/mychardev` | Figure 3. The shell round trip: cat now prints the data tee wrote, because the driver stores it in the kernel buffer. |
 | 4 | `sudo ./test_driver rw` | Figure 4. The test program writes a string, reads it back, and confirms they match. The printed buffer addresses are user-space addresses (0x7ff…). |
 | 5 | `sudo ./test_driver big` and `fault` | Figure 5. Edge cases: a 2000-byte write is cut to 1024 bytes, then the next write fails with ENOSPC; a bad pointer returns EFAULT and the kernel keeps running. |
-| 6 | `race` with `use_lock=1`, then `use_lock=0` | Figure 6. With the mutex, 0 of \[N\] reads are torn. With the mutex disabled, \[N\] reads see a half-written buffer. |
+| 6 | `race` with `use_lock=1`, then `use_lock=0` | Figure 6. With the mutex, 0 of 1,200,000 reads are torn (400,000 if the screenshot shows one run). With the mutex disabled, \[N\] reads see a half-written buffer. |
 | 7 | `sudo dmesg -t \| grep mychardev` | Figure 7. The kernel log names each process and shows the bytes stored, the ENOSPC, and the EFAULT from the kernel's side. |
 | 8 | lldb register read at the write breakpoint | Figure 8. lldb stopped at write: rdi holds the file descriptor (3), rsi the buffer address, and rdx the byte count, as the x86-64 calling convention specifies. |
 
@@ -190,25 +191,25 @@ Rename "5. Testing performed and results" to **6. Testing and Results**.
 
 **Add** under "6.2 Final project update: testing approach":
 
-> Kernel code can't be unit tested like a normal program, so every test loads the real module in the virtual machine and checks the result from user space. The test program checks each behavior itself and prints PASS or FAIL. One script (collect\_stage4.sh) builds everything, runs every test in a fixed order, repeats the race test three times with the lock on and three times with it off, and saves all output as evidence, so the whole run can be repeated with one command. Test environment: \[kernel version\], \[N\] vCPUs. \[from stage4\_env.txt\]
+> Kernel code can't be unit tested like a normal program, so every test loads the real module in the virtual machine and checks the result from user space. The test program checks each behavior itself and prints PASS or FAIL. One script (collect\_stage4.sh) builds everything, runs every test in a fixed order, repeats the race test three times with the lock on and three times with it off, and saves all output as evidence, so the whole run can be repeated with one command. Test environment: kernel 7.0.0-38-generic, 2 vCPUs.
 
 **Add** under "6.3 Final project update: test cases and results", as a Pages table, coloring Pass green the same way as the midterm table:
 
 | ID | Test | Expected | Result |
 | --- | --- | --- | --- |
-| T1 | Build stage 4 on kernel 7.0 | mychardev.ko built, environment warnings only | \[ \] |
-| T2 | Read right after loading (`empty`) | read returns 0 | \[ \] |
-| T3 | Write, then read back (`rw`) | Same bytes returned | \[ \] |
-| T4 | Shell round trip (tee, cat) | cat prints `hello` | \[ \] |
-| T5 | 2000-byte write (`big`) | 1024 stored, then ENOSPC (errno 28) | \[ \] |
-| T6 | Bad pointer (`fault`) | EFAULT (errno 14), no crash | \[ \] |
-| T7 | Failed write keeps stored data | `keep-me` read back after `fault` | \[ \] |
-| T8 | Race, lock on (3 runs × 2000 iterations) | 0 torn reads | \[ \] |
-| T9 | Race, lock off (3 runs) | Torn reads appear (expected FAIL) | \[ \] |
-| T10 | Open after unloading | "No such file or directory" | \[ \] |
-| T11 | strace of `rw` | openat, write, read, close on the device | \[ \] |
+| T1 | Build stage 4 on kernel 7.0 | mychardev.ko built, environment warnings only | Pass (only compiler/pahole version warnings; BTF skipped) |
+| T2 | Read right after loading (`empty`) | read returns 0 | Pass (returned 0) |
+| T3 | Write, then read back (`rw`) | Same bytes returned | Pass (21 bytes written, same 21 read back) |
+| T4 | Shell round trip (tee, cat) | cat prints `hello` | Pass |
+| T5 | 2000-byte write (`big`) | 1024 stored, then ENOSPC (errno 28) | Pass (returned 1024, then errno 28) |
+| T6 | Bad pointer (`fault`) | EFAULT (errno 14), no crash | Pass (errno 14, kernel kept running) |
+| T7 | Failed write keeps stored data | `keep-me` read back after `fault` | Pass |
+| T8 | Race, lock on (3 runs × 200,000 iterations) | 0 torn reads | Pass (0 torn in 1,200,000 reads) |
+| T9 | Race, lock off (3 runs) | Torn reads appear (expected FAIL) | Expected fail (1, 0, 3 torn: 4 in 1,200,000 reads) |
+| T10 | Open after unloading | "No such file or directory" | Pass |
+| T11 | strace of `rw` | openat, write, read, close on the device | Pass (write = 11, read = 11, both closes = 0) |
 
-**Add** one closing sentence after the table: "\[N\] of \[N\] tests passed. T9 is expected to fail: it shows the race condition that the mutex prevents."
+**Add** one closing sentence after the table: "All 11 tests behaved as expected: 10 passed, and T9 failed as intended, with 4 torn reads in 1,200,000 once the lock was off. It shows the race condition that the mutex prevents. One of the three lock-off runs had no torn reads, because the race only happens when the timing lines up."
 
 ## Section 7: Challenges and Solutions
 
@@ -278,7 +279,7 @@ The midterm had no references section. Paste this list, then remove anything you
 - [ ] Section headings read exactly: 1 Project Introduction, 2 Requirements, 3 System Design, 4 Implementation, 5 Project Output, 6 Testing and Results, 7 Challenges and Solutions, 8 Conclusion and Future Scope, 9 References.
 - [ ] Every midterm paragraph, table, and figure is still somewhere in the report (use the map at the top to check).
 - [ ] Each section with new work has a "Final project update" subheading.
-- [ ] Figures are numbered 1–8 in order, and every figure is mentioned in the text.
+- [ ] Figures are numbered 1–8 and Listings 1–5 in order, and every figure and listing is mentioned in the text.
 - [ ] No screenshot shows a username, hostname, or IP address.
 - [ ] The instructor's name is spelled the same everywhere (the proposal has "Pavalli", the midterm report "Pallavi").
 - [ ] AI assistance is acknowledged as the course policy requires.

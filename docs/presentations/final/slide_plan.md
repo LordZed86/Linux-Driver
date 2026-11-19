@@ -1,6 +1,6 @@
 # CS 370 Final Presentation: Slide Plan
 
-Nov 17, 2026 · @kellen is fine
+Nov 17, 2026
 
 ## How to use this plan
 
