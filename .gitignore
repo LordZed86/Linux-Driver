@@ -41,3 +41,10 @@ docs/screenshots/**/Screenshot 20*
 # Submission and presentation files (Keynote .key files are already covered by *.key above)
 *.zip
 *.pptx
+
+# Report and presentation working files stay local; only finished PDFs are published
+docs/presentations/**
+!docs/presentations/**/
+!docs/presentations/final/Linux Driver Development Final.pdf
+docs/reports/*.md
+docs/notes/presentation/

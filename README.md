@@ -133,15 +133,13 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 │   ├── collect_linking.sh           #   ELF types, static vs. dynamic linking, relocations
 │   └── package_submission.sh        #   Builds the submission ZIP from the last commit
 ├── docs/
-│   ├── proposal.md                  # Original project proposal
 │   ├── setup_guide.md               # Host and VM setup
-│   ├── reports/
-│   │   ├── midterm_report.pdf       #   Midterm report as submitted
-│   │   └── final_report_paste_guide.md  # Plan for updating the midterm report into the final
+│   ├── reports/                     # Submitted reports (PDF)
+│   │   ├── Project Proposal Linux Driver Development.pdf
+│   │   └── midterm_report.pdf
 │   ├── presentations/
-│   │   ├── code_walkthrough.md      #   Line-by-line notes on the module and test program
-│   │   ├── midterm/                 #   Midterm demo script, narration, talking points
-│   │   └── final/                   #   Final demo script, narration, slide plan
+│   │   └── final/
+│   │       └── Linux Driver Development Final.pdf  # Final presentation slides
 │   ├── evidence/                    # Saved tool output (build, nm, readelf, objdump, dmesg, strace)
 │   │   ├── stage1/
 │   │   ├── stage3/
@@ -291,16 +289,15 @@ There is no automated test framework; testing is done by running the module and 
 
 ## Documentation
 
-| Document                                                           | Description                                              |
-| ------------------------------------------------------------------ | -------------------------------------------------------- |
-| [Project Proposal](docs/proposal.md)                               | Original proposal submitted for CS 370                   |
-| [Midterm Report](docs/reports/midterm_report.pdf)                  | Progress report with technical evidence                  |
-| [Setup Guide](docs/setup_guide.md)                                 | How the development environment and test VM are set up   |
-| [Code Walkthrough](docs/presentations/code_walkthrough.md)         | Explanation of the module and test program               |
-| [Final Demo](docs/presentations/final/demo_narration.md)           | Demo script steps and what each one shows                |
-| [Dev Log](docs/notes/dev_log.md)                                   | Chronological record of decisions, bugs, and fixes       |
-| [Finalization Checklist](docs/notes/finalization_checklist.md)     | Remaining work and final deliverables                    |
-| [Evidence](docs/evidence/)                                         | Saved tool output (`readelf`, `objdump`, `nm`, `dmesg`)  |
+| Document                                                                                | Description                                             |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| [Project Proposal](docs/reports/Project%20Proposal%20Linux%20Driver%20Development.pdf)  | Original proposal submitted for CS 370                  |
+| [Midterm Report](docs/reports/midterm_report.pdf)                                       | Progress report with technical evidence                 |
+| [Final Presentation](docs/presentations/final/Linux%20Driver%20Development%20Final.pdf) | Final presentation slides                               |
+| [Setup Guide](docs/setup_guide.md)                                                      | How the development environment and test VM are set up  |
+| [Dev Log](docs/notes/dev_log.md)                                                        | Chronological record of decisions, bugs, and fixes      |
+| [Finalization Checklist](docs/notes/finalization_checklist.md)                          | Remaining work and final deliverables                   |
+| [Evidence](docs/evidence/)                                                              | Saved tool output (`readelf`, `objdump`, `nm`, `dmesg`) |
 
 ---
 
