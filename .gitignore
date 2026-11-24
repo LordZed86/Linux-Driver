@@ -46,5 +46,6 @@ docs/screenshots/**/Screenshot 20*
 docs/presentations/**
 !docs/presentations/**/
 !docs/presentations/final/Linux Driver Development Final.pdf
+!docs/presentations/midterm/Linux Driver Development Exploration.pdf
 docs/reports/*.md
 docs/notes/presentation/
