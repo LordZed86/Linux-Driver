@@ -136,7 +136,8 @@ The kernel cannot trust a pointer handed to it by a user program, since user and
 │   ├── setup_guide.md               # Host and VM setup
 │   ├── reports/                     # Submitted reports (PDF)
 │   │   ├── Project Proposal Linux Driver Development.pdf
-│   │   └── midterm_report.pdf
+│   │   ├── midterm_report.pdf
+│   │   └── final_report.pdf
 │   ├── presentations/
 │   │   ├── midterm/
 │   │   │   └── Linux Driver Development Exploration.pdf  # Midterm presentation slides
@@ -291,16 +292,17 @@ There is no automated test framework; testing is done by running the module and 
 
 ## Documentation
 
-| Document                                                                                          | Description                                             |
-| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| [Project Proposal](docs/reports/Project%20Proposal%20Linux%20Driver%20Development.pdf)            | Original proposal submitted for CS 370                  |
-| [Midterm Report](docs/reports/midterm_report.pdf)                                                 | Progress report with technical evidence                 |
-| [Midterm Presentation](docs/presentations/midterm/Linux%20Driver%20Development%20Exploration.pdf) | Midterm presentation slides                             |
-| [Final Presentation](docs/presentations/final/Linux%20Driver%20Development%20Final.pdf)           | Final presentation slides                               |
-| [Setup Guide](docs/setup_guide.md)                                                                | How the development environment and test VM are set up  |
-| [Dev Log](docs/notes/dev_log.md)                                                                  | Chronological record of decisions, bugs, and fixes      |
-| [Finalization Checklist](docs/notes/finalization_checklist.md)                                    | Remaining work and final deliverables                   |
-| [Evidence](docs/evidence/)                                                                        | Saved tool output (`readelf`, `objdump`, `nm`, `dmesg`) |
+| Document                                                                                          | Description                                                |
+| ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [Project Proposal](docs/reports/Project%20Proposal%20Linux%20Driver%20Development.pdf)            | Original proposal submitted for CS 370                     |
+| [Midterm Report](docs/reports/midterm_report.pdf)                                                 | Progress report with technical evidence                    |
+| [Final Report](docs/reports/final_report.pdf)                                                     | Final report: design, implementation, testing, and results |
+| [Midterm Presentation](docs/presentations/midterm/Linux%20Driver%20Development%20Exploration.pdf) | Midterm presentation slides                                |
+| [Final Presentation](docs/presentations/final/Linux%20Driver%20Development%20Final.pdf)           | Final presentation slides                                  |
+| [Setup Guide](docs/setup_guide.md)                                                                | How the development environment and test VM are set up     |
+| [Dev Log](docs/notes/dev_log.md)                                                                  | Chronological record of decisions, bugs, and fixes         |
+| [Finalization Checklist](docs/notes/finalization_checklist.md)                                    | Remaining work and final deliverables                      |
+| [Evidence](docs/evidence/)                                                                        | Saved tool output (`readelf`, `objdump`, `nm`, `dmesg`)    |
 
 ---
 
